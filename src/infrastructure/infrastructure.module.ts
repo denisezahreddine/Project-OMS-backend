@@ -6,10 +6,9 @@ import { OrderRepositoryImpl } from './adapters/order.repository';
 import { EmailNotifier } from '../domain/ports/email.notifier';
 import { EmailNotifierAdapter } from './adapters/email.notifier';
 import { PrismaService } from './database/prisma.service';
-import { WorkflowEngineService } from './workflow-engine/workflow-engine.service';
+import { WorkflowEngineUsecase } from '../domain/usecases/workflow-engine.usecase';
 import { WorkflowRepository } from '../domain/ports/workflow.repository';
 import { PrismaWorkflowRepository } from './adapters/workflow.repository';
-import { WorkflowEnginePort } from '../domain/ports/workflow-engine.port';
 import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
 import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
 import { ActionFactory } from './workflow-engine/action-factory.service';
@@ -38,11 +37,7 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
       useClass: PrismaWorkflowRepository,
     },
     // Workflow engine (port → implémentation)
-    WorkflowEngineService,
-    {
-      provide: WorkflowEnginePort,
-      useExisting: WorkflowEngineService,
-    },
+    WorkflowEngineUsecase,
     NotifyAdminHandler,
     NotifyUserHandler,
     CreateLogHandler,
@@ -57,7 +52,6 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
     IOrderRepository,
     EmailNotifier,
     WorkflowRepository,
-    WorkflowEnginePort,
     NotifyAdminHandler,
     NotifyUserHandler,
     CreateLogHandler,

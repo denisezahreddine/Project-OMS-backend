@@ -2,10 +2,9 @@ import {Module} from '@nestjs/common';
 import {RegisterUseCase} from "../domain/usecases/register.usecase";
 import {CreateOrderUseCase} from "../domain/usecases/order.usecases";
 import {InfrastructureModule} from "../infrastructure/infrastructure.module";
-import {WorkflowEngineService} from "../infrastructure/workflow-engine/workflow-engine.service";
+import {WorkflowEngineUsecase} from "./usecases/workflow-engine.usecase";
 import {CreateWorkflowUseCase} from "./usecases/create-workflow.usecase";
 import {AddActionToWorkflowUseCase} from "./usecases/add-action-to-workflow.usecase";
-import {TriggerManualWorkflowUseCase} from "./usecases/trigger-manual-workflow.usecase";
 import {FindWorkflowExecutionsUseCase} from "./usecases/find-workflow-executions.usecase";
 import {ListMerchantWorkflowsUseCase} from "./usecases/list-merchant-workflows.usecase";
 
@@ -15,10 +14,9 @@ import {ListMerchantWorkflowsUseCase} from "./usecases/list-merchant-workflows.u
     providers: [
         RegisterUseCase,
         CreateOrderUseCase,
-        WorkflowEngineService,
+        WorkflowEngineUsecase,
         CreateWorkflowUseCase,
         AddActionToWorkflowUseCase,
-        TriggerManualWorkflowUseCase,
         FindWorkflowExecutionsUseCase,
         ListMerchantWorkflowsUseCase,
     ],
@@ -26,8 +24,8 @@ import {ListMerchantWorkflowsUseCase} from "./usecases/list-merchant-workflows.u
         RegisterUseCase,
         CreateOrderUseCase,
         CreateWorkflowUseCase,
+        WorkflowEngineUsecase,
         AddActionToWorkflowUseCase,
-        TriggerManualWorkflowUseCase,
         FindWorkflowExecutionsUseCase,
         ListMerchantWorkflowsUseCase,
     ],

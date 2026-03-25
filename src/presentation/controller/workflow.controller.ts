@@ -1,18 +1,18 @@
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.usecase';
 import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
-import { TriggerManualWorkflowUseCase } from '../../domain/usecases/trigger-manual-workflow.usecase';
 import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
 import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchant-workflows.usecase';
 import { CreateWorkflowDto } from '../dto/create-workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
+import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
 
 @Controller('workflows')
 export class WorkflowController {
   constructor(
     private createWorkflow: CreateWorkflowUseCase,
     private addAction: AddActionToWorkflowUseCase,
-    private triggerManual: TriggerManualWorkflowUseCase,
+    private triggerManual: WorkflowEngineUsecase,
     private findExecutions: FindWorkflowExecutionsUseCase,
     private listWorkflows: ListMerchantWorkflowsUseCase,
   ) {}
@@ -38,7 +38,7 @@ export class WorkflowController {
   @Post(':id/trigger')
   async triggerManually() {
     const merchantId = '69c3e2e095ecf7392c41d2a3';
-    await this.triggerManual.execute(merchantId);
+    await this.triggerManual.dispatch('manual.trigger',merchantId,null);
     return { message: 'Workflow declenche manuellement' };
   }
 

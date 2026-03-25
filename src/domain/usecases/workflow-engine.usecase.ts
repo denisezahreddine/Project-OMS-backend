@@ -3,14 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   WorkflowRepository,
   WorkflowData,
-} from '../../domain/ports/workflow.repository';
-import { WorkflowEnginePort } from '../../domain/ports/workflow-engine.port';
-import { ActionFactory } from './action-factory.service';
-import { ActionContext } from '../../domain/ports/action-handler.port';
+} from '../ports/workflow.repository';
+import { ActionFactory } from '../../infrastructure/workflow-engine/action-factory.service';
+import { ActionContext } from '../ports/action-handler.port';
 
 @Injectable()
-export class WorkflowEngineService implements WorkflowEnginePort {
-  private readonly logger = new Logger(WorkflowEngineService.name);
+export class WorkflowEngineUsecase {
+  private readonly logger = new Logger(WorkflowEngineUsecase.name);
 
   constructor(
     private workflowRepo: WorkflowRepository,
