@@ -1,11 +1,12 @@
 import {Module} from '@nestjs/common';
-import {PrismaModule} from "./modules/prisma.module";
-import {MerchantModule} from "./modules/merchant.module";
-import {OrderModule} from "./modules/order.module";
+import {ApplicationModule} from "./application/application.module";
+import {DomainModule} from "./domain/domain.module";
+import {InfrastructureModule} from "./infrastructure/infrastructure.module";
+import {PresentationModule} from "./presentation/presentation.module";
 
 
 @Module({
-    imports: [PrismaModule, MerchantModule,OrderModule],
+    imports: [ ApplicationModule,DomainModule,InfrastructureModule,PresentationModule],
     controllers: [],
     providers: [],
 })

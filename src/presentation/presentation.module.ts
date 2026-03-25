@@ -11,14 +11,10 @@ import {OrderRepositoryImpl} from "../infrastructure/repository/order.repository
 import {IOrderRepository} from "../domain/repositories/order.repository";
 import {EmailNotifierAdapter} from "../infrastructure/adapters/email.notifier";
 import {EmailNotifier} from "../domain/repositories/email.notifier";
+import {ApplicationModule} from "../application/application.module";
 
 @Module({
-    controllers: [OrderController],
-    providers: [
-        PrismaService,
-        CreateOrderUseCase,
-        {provide: IOrderRepository, useClass: OrderRepositoryImpl},
-        {provide: EmailNotifier, useClass: EmailNotifierAdapter},
-    ],
+    imports: [ApplicationModule], // Importe les Use Cases
+    controllers: [AuthController, OrderController],
 })
-export class OrderModule {}
+export class PresentationModule {}
