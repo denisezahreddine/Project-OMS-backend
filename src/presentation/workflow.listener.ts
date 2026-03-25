@@ -11,7 +11,8 @@ export class WorkflowListener {
   @OnEvent('user.registered')
   async handleUserRegistered(data: { merchantId: string; email: string }) {
     this.logger.log(`Event recu: user.registered pour ${data.email}`);
-    await this.engine.dispatch('user.registered', data.merchantId, data);
+    // user.registered est un événement platform-level : tous les workflows actifs avec ce trigger s'exécutent
+    await this.engine.dispatch('user.registered', undefined, data);
   }
 
   @OnEvent('order.created')

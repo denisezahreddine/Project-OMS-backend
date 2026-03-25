@@ -26,7 +26,7 @@ export abstract class WorkflowRepository {
   abstract findById(id: string): Promise<WorkflowData | null>;
   abstract findByTrigger(
     trigger: string,
-    merchantId: string,
+    merchantId?: string,
   ): Promise<WorkflowData[]>;
   abstract create(data: {
     id: string;
