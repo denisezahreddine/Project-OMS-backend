@@ -44,7 +44,6 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
   }): Promise<WorkflowData> {
     return this.prisma.workflow.create({
       data: {
-        id: data.id,
         name: data.name,
         trigger: data.trigger,
         merchantId: data.merchantId,
@@ -64,7 +63,6 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
   ): Promise<WorkflowActionData> {
     return this.prisma.workflowAction.create({
       data: {
-        id: action.id,
         workflowId,
         type: action.type,
         order: action.order,
@@ -92,7 +90,6 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
   }): Promise<WorkflowExecutionData> {
     return this.prisma.workflowExecution.create({
       data: {
-        id: data.id,
         workflowId: data.workflowId,
         status: data.status,
         logs: data.logs,

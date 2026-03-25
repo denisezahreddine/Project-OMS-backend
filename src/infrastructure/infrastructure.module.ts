@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MerchantRepository } from '../domain/ports/merchant.repository';
+import { MerchantPort } from '../domain/ports/merchant.port';
 import { MerchantRepositoryImpl } from './adapters/merchant.repository';
 import { IOrderRepository } from '../domain/ports/order.repository';
 import { OrderRepositoryImpl } from './adapters/order.repository';
@@ -22,7 +22,7 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
   providers: [
     PrismaService,
     {
-      provide: MerchantRepository,
+      provide: MerchantPort,
       useClass: MerchantRepositoryImpl,
     },
     {
@@ -53,7 +53,7 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
     WorkflowListener,
   ],
   exports: [
-    MerchantRepository,
+    MerchantPort,
     IOrderRepository,
     EmailNotifier,
     WorkflowRepository,
