@@ -1,8 +1,8 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM0NDRjZTM2ODc0Y2E1ODQ3NWUzMzkiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ0NzAzNjgsImV4cCI6MTc3NDU1Njc2OH0.7vHUQQMfr0KwcsJixpkLNtw9hQ0AHtha1AJwEpfxBuM
-@merchantId = 69c444ce36874ca58475e339
-@workflowId =69c44c07acb033149cb4cc41
+@token = REMPLACER_PAR_TON_TOKEN
+@merchantId = REMPLACER_PAR_TON_MERCHANT_ID
+@workflowId = REMPLACER_PAR_TON_WORKFLOW_ID
 
 
 ###########################################################
