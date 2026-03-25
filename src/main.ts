@@ -22,6 +22,17 @@ async function bootstrap() {
         .setTitle('Ma Démo MongoDB')
         .setDescription('Interface de test pour mon backend')
         .setVersion('1.0')
+        .addBearerAuth( // <--- Ajoute ceci
+            {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                name: 'JWT',
+                description: 'Entrez votre token JWT',
+                in: 'header',
+            },
+            'Authorization', // C'est l'ID de sécurité qu'on réutilisera plus tard
+        )
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
