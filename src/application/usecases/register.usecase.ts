@@ -2,13 +2,13 @@
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { MerchantRepository } from '../../domain/ports/merchant.repository';
+import { MerchantPort } from '../../domain/ports/merchant.port';
 import { MerchantEntity } from '../../domain/models/merchant.entity';
 import { CustomErrorException } from '../../domain/exceptions/custom.error.exceptions';
 @Injectable()
 export class RegisterUseCase {
   constructor(
-    private merchantRepo: MerchantRepository, // UserRepository
+    private merchantRepo: MerchantPort, // UserRepository
   ) {}
 
   async execute(email: string, name: string, password: string) {

@@ -1,11 +1,11 @@
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
-import { CreateWorkflowUseCase } from '../application/usecases/create-workflow.usecase';
-import { AddActionToWorkflowUseCase } from '../application/usecases/add-action-to-workflow.usecase';
-import { TriggerManualWorkflowUseCase } from '../application/usecases/trigger-manual-workflow.usecase';
-import { FindWorkflowExecutionsUseCase } from '../application/usecases/find-workflow-executions.usecase';
-import { ListMerchantWorkflowsUseCase } from '../application/usecases/list-merchant-workflows.usecase';
-import { CreateWorkflowDto } from './dto/create-workflow.dto';
-import { AddActionDto } from './dto/add-action.dto';
+import { CreateWorkflowUseCase } from '../../application/usecases/create-workflow.usecase';
+import { AddActionToWorkflowUseCase } from '../../application/usecases/add-action-to-workflow.usecase';
+import { TriggerManualWorkflowUseCase } from '../../application/usecases/trigger-manual-workflow.usecase';
+import { FindWorkflowExecutionsUseCase } from '../../application/usecases/find-workflow-executions.usecase';
+import { ListMerchantWorkflowsUseCase } from '../../application/usecases/list-merchant-workflows.usecase';
+import { CreateWorkflowDto } from '../dto/create-workflow.dto';
+import { AddActionDto } from '../dto/add-action.dto';
 
 @Controller('workflows')
 export class WorkflowController {
@@ -21,7 +21,7 @@ export class WorkflowController {
   @Post()
   async create(@Body() dto: CreateWorkflowDto) {
     // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '000000000000000000000001';
+    const merchantId = '69c3e2e095ecf7392c41d2a3';
     return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
   }
 
@@ -37,7 +37,7 @@ export class WorkflowController {
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
   async triggerManually() {
-    const merchantId = '000000000000000000000001';
+    const merchantId = '69c3e2e095ecf7392c41d2a3';
     await this.triggerManual.execute(merchantId);
     return { message: 'Workflow declenche manuellement' };
   }
@@ -51,7 +51,7 @@ export class WorkflowController {
   // GET /workflows
   @Get()
   async findAll() {
-    const merchantId = '000000000000000000000001';
+    const merchantId = '69c3e2e095ecf7392c41d2a3';
     return this.listWorkflows.execute(merchantId);
   }
 }

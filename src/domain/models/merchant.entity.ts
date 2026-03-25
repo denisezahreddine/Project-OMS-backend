@@ -15,7 +15,7 @@ export class MerchantEntity {
     name: string | null,
     email: string,
     password: string,
-    createdAt: Date, // 👈 Doit être Date
+    createdAt: Date,
     updatedAt: Date,
   ): MerchantEntity {
     if (!email.includes('@')) {
