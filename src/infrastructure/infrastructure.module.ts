@@ -8,14 +8,13 @@ import { OrderRepositoryImpl } from './adapters/order.repository';
 import { EmailNotifier } from '../domain/ports/email.notifier';
 import { EmailNotifierAdapter } from './adapters/email.notifier';
 import { PrismaService } from './database/prisma.service';
-import { WorkflowEngineService } from './workflow-engine/workflow-engine.service';
+import { WorkflowEngineUsecase } from '../domain/usecases/workflow-engine.usecase';
 import { WorkflowRepository } from '../domain/ports/workflow.repository';
 import { PrismaWorkflowRepository } from './adapters/workflow.repository';
-import { WorkflowEnginePort } from '../domain/ports/workflow-engine.port';
 import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
 import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
 import { ActionFactory } from './workflow-engine/action-factory.service';
-import { WorkflowListener } from './workflow-engine/workflow.listener';
+import { WorkflowListener } from '../presentation/workflow.listener';
 import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
 import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handler';
 import { JwtStrategy } from './auth/jwt.strategy';
@@ -47,19 +46,13 @@ import { JwtStrategy } from './auth/jwt.strategy';
       useClass: PrismaWorkflowRepository,
     },
     // Workflow engine (port → implémentation)
-    WorkflowEngineService,
-    {
-      provide: WorkflowEnginePort,
-      useExisting: WorkflowEngineService,
-    },
+    WorkflowEngineUsecase,
     NotifyAdminHandler,
     NotifyUserHandler,
     CreateLogHandler,
     CreateTaskHandler,
     // Factory
     ActionFactory,
-    // Listener d'événements
-    WorkflowListener,
     JwtStrategy,
   ],
   exports: [
@@ -68,13 +61,10 @@ import { JwtStrategy } from './auth/jwt.strategy';
     IOrderRepository,
     EmailNotifier,
     WorkflowRepository,
-    WorkflowEnginePort,
     NotifyAdminHandler,
     NotifyUserHandler,
     CreateLogHandler,
     CreateTaskHandler,
-    ActionFactory,
-    WorkflowListener,
-  ],
+    ActionFactory,],
 })
 export class InfrastructureModule {}

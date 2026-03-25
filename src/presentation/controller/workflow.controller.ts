@@ -1,11 +1,11 @@
 import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.usecase';
 import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
-import { TriggerManualWorkflowUseCase } from '../../domain/usecases/trigger-manual-workflow.usecase';
 import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
 import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchant-workflows.usecase';
 import { CreateWorkflowDto } from '../dto/create-workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
+import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -14,7 +14,7 @@ export class WorkflowController {
   constructor(
     private createWorkflow: CreateWorkflowUseCase,
     private addAction: AddActionToWorkflowUseCase,
-    private triggerManual: TriggerManualWorkflowUseCase,
+    private triggerManual: WorkflowEngineUsecase,
     private findExecutions: FindWorkflowExecutionsUseCase,
     private listWorkflows: ListMerchantWorkflowsUseCase,
   ) {}
@@ -34,7 +34,7 @@ export class WorkflowController {
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
   async triggerManually(@Request() req) {
-    await this.triggerManual.execute(req.user.id);
+    await this.triggerManual.dispatch('manual.trigger',req.user.id,null);
     return { message: 'Workflow declenche manuellement' };
   }
 

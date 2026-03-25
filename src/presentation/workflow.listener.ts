@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { WorkflowEngineService } from './workflow-engine.service';
+import { WorkflowEngineUsecase } from '../domain/usecases/workflow-engine.usecase';
 
 @Injectable()
 export class WorkflowListener {
   private readonly logger = new Logger(WorkflowListener.name);
 
-  constructor(private engine: WorkflowEngineService) {}
+  constructor(private engine: WorkflowEngineUsecase) {}
 
   @OnEvent('user.registered')
   async handleUserRegistered(data: { merchantId: string; email: string }) {
