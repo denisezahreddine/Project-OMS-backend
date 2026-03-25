@@ -1,9 +1,9 @@
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
-import { CreateWorkflowUseCase } from '../../application/usecases/create-workflow.usecase';
-import { AddActionToWorkflowUseCase } from '../../application/usecases/add-action-to-workflow.usecase';
-import { TriggerManualWorkflowUseCase } from '../../application/usecases/trigger-manual-workflow.usecase';
-import { FindWorkflowExecutionsUseCase } from '../../application/usecases/find-workflow-executions.usecase';
-import { ListMerchantWorkflowsUseCase } from '../../application/usecases/list-merchant-workflows.usecase';
+import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.usecase';
+import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
+import { TriggerManualWorkflowUseCase } from '../../domain/usecases/trigger-manual-workflow.usecase';
+import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
+import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchant-workflows.usecase';
 import { CreateWorkflowDto } from '../dto/create-workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
 

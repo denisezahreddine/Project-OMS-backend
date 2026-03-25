@@ -4,7 +4,7 @@ import {
   Body,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { CreateOrderUseCase } from '../../application/usecases/order.usecases';
+import { CreateOrderUseCase } from '../../domain/usecases/order.usecases';
 import { CreateOrderDto } from '../dto/order.dto';
 
 @Controller('/orders')
