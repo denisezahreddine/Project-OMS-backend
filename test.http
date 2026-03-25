@@ -1,0 +1,178 @@
+### Variables
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM0NDRjZTM2ODc0Y2E1ODQ3NWUzMzkiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ0NzQ0NDksImV4cCI6MTc3NDU2MDg0OX0.gktXjBzgt5pTQ_8knuruT9pJG_MrCA01k4f51bBwbME
+@merchantId = 69c444ce36874ca58475e339
+@workflowId = 69c45517288e0a1b71a69ad2
+
+
+###########################################################
+### ETAPE 1 — AUTH
+###########################################################
+
+### 1. Inscription Admin
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@oms.com",
+  "name": "Admin",
+  "password": "password123",
+  "role": "admin"
+}
+
+###
+
+### 2. Login Admin → copier userId dans @merchantId et accessToken dans @token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@oms.com",
+  "password": "password123"
+}
+
+###########################################################
+### ETAPE 2 — CRÉER LE WORKFLOW (connecté en tant qu'admin)
+###########################################################
+
+### 3. Créer le workflow trigger user.registered
+POST {{baseUrl}}/workflows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Réaction inscription",
+  "trigger": "user.registered"
+}
+
+###
+
+### 4. Ajouter action notify_admin → copier workflowId dans @workflowId
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "notify_admin",
+  "order": 1
+}
+
+###
+
+### 5. Ajouter action create_log
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_log",
+  "order": 2
+}
+
+###########################################################
+### ETAPE 3 — INSCRIRE UN MERCHANT (déclenche user.registered)
+###########################################################
+
+### 6. Inscription Merchant - déclenche automatiquement le workflow
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "merchant@oms.com",
+  "name": "John Doe",
+  "password": "password123",
+  "role": "merchant"
+}
+
+###########################################################
+### ETAPE 4 — VÉRIFIER L'EXÉCUTION DU WORKFLOW
+###########################################################
+
+### 7. Voir les exécutions → doit afficher status: success, logs: [notify_admin: OK, create_log: OK]
+GET {{baseUrl}}/workflows/{{workflowId}}/executions
+Authorization: Bearer {{token}}
+
+###########################################################
+### ETAPE 5 — TESTER order.created
+###########################################################
+
+### 8. Login Merchant → copier accessToken dans @token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "merchant@oms.com",
+  "password": "password123"
+}
+
+###
+
+### 9. Créer un workflow trigger order.created
+POST {{baseUrl}}/workflows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Réaction création commande",
+  "trigger": "order.created"
+}
+
+###
+
+### 10. Ajouter action notify_user
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "notify_user",
+  "order": 1
+}
+
+###
+
+### 11. Ajouter action create_log
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_log",
+  "order": 2
+}
+
+###
+
+### 12. Créer une commande → déclenche order.created
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "merchantId": "{{merchantId}}",
+  "customerEmail": "customer@test.com",
+  "items": [
+    {
+      "productId": "prod-001",
+      "quantity": 2,
+      "price": 49.99
+    },
+    {
+      "productId": "prod-002",
+      "quantity": 1,
+      "price": 19.99
+    }
+  ]
+}
+
+###
+
+### 13. Voir les exécutions → doit afficher status: success
+GET {{baseUrl}}/workflows/{{workflowId}}/executions
+Authorization: Bearer {{token}}
+
+###
+
+### 14. Lister tous mes workflows
+GET {{baseUrl}}/workflows
+Authorization: Bearer {{token}}

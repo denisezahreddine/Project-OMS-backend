@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.usecase';
 import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
 import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
@@ -6,8 +6,9 @@ import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchan
 import { CreateWorkflowDto } from '../dto/create-workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
 import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
-import {ApiProperty} from "@nestjs/swagger";
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('workflows')
 export class WorkflowController {
   constructor(
@@ -15,24 +16,20 @@ export class WorkflowController {
     private addAction: AddActionToWorkflowUseCase,
     private triggerManual: WorkflowEngineUsecase,
     private findExecutions: FindWorkflowExecutionsUseCase,
-    private listWorkflows: ListMerchantWorkflowsUseCase
+    private listWorkflows: ListMerchantWorkflowsUseCase,
   ) {}
 
   // POST /workflows
-  @ApiProperty({ example: 'Mon Workflow' })
   @Post()
   async create(@Body() dto: CreateWorkflowDto) {
     // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '69c448b06dd35d96848f532c';
+    const merchantId = '69c3e2e095ecf7392c41d2a3';
     return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
   }
 
   // POST /workflows/:id/actions
   @Post(':id/actions')
-  async addActionToWorkflow(
-    @Param('id') id: string,
-    @Body() dto: AddActionDto,
-  ) {
+  async addActionToWorkflow(@Param('id') id: string, @Body() dto: AddActionDto) {
     return this.addAction.execute(id, dto.type, dto.order, dto.config);
   }
 
@@ -52,8 +49,7 @@ export class WorkflowController {
 
   // GET /workflows
   @Get()
-  async findAll() {
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
-    return this.listWorkflows.execute(merchantId);
+  async findAll(@Request() req) {
+    return this.listWorkflows.execute(req.user.id);
   }
 }

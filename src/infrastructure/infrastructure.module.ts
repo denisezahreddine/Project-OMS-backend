@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { MerchantPort } from '../domain/ports/merchant.port';
 import { MerchantRepositoryImpl } from './adapters/merchant.repository';
 import { IOrderRepository } from '../domain/ports/order.repository';
@@ -15,9 +17,16 @@ import { ActionFactory } from './workflow-engine/action-factory.service';
 import { WorkflowListener } from '../presentation/workflow.listener';
 import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
 import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handler';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
-  imports: [],
+  imports: [
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET ?? 'super-secret-key-change-in-production',
+      signOptions: { expiresIn: '24h' },
+    }),
+  ],
   providers: [
     PrismaService,
     {
@@ -44,9 +53,10 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
     CreateTaskHandler,
     // Factory
     ActionFactory,
-
+    JwtStrategy,
   ],
   exports: [
+    JwtModule,
     MerchantPort,
     IOrderRepository,
     EmailNotifier,

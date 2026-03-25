@@ -18,6 +18,7 @@ model Merchant {
   email     String     @unique
   name      String?
   password  String
+  role      String     @default("merchant")
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   orders    Order[]
