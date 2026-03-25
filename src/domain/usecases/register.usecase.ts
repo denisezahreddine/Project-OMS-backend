@@ -5,10 +5,12 @@ import { Injectable } from '@nestjs/common';
 import { MerchantPort } from '../../domain/ports/merchant.port';
 import { MerchantEntity } from '../../domain/models/merchant.entity';
 import { CustomErrorException } from '../../domain/exceptions/custom.error.exceptions';
+import {EventEmitter2} from "@nestjs/event-emitter";
 @Injectable()
 export class RegisterUseCase {
   constructor(
     private merchantRepo: MerchantPort, // UserRepository
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   async execute(email: string, name: string, password: string) {
@@ -28,7 +30,12 @@ export class RegisterUseCase {
       new Date(),
       new Date(),
     );
-
-    return this.merchantRepo.save(user);
+    //todo create event
+   /* const response = await this.merchantRepo.save(user);
+    this.eventEmitter.emit('user.registered', {
+      merchantId:  response.id,
+      email: response.email
+    });*/
+    return response;
   }
 }

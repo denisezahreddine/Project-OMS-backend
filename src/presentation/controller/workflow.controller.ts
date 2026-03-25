@@ -14,14 +14,14 @@ export class WorkflowController {
     private addAction: AddActionToWorkflowUseCase,
     private triggerManual: WorkflowEngineUsecase,
     private findExecutions: FindWorkflowExecutionsUseCase,
-    private listWorkflows: ListMerchantWorkflowsUseCase,
+    private listWorkflows: ListMerchantWorkflowsUseCase
   ) {}
 
   // POST /workflows
   @Post()
   async create(@Body() dto: CreateWorkflowDto) {
     // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
+    const merchantId = '69c448b06dd35d96848f532c';
     return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
   }
 
