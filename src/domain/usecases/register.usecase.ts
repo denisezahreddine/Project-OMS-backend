@@ -31,8 +31,8 @@ export class RegisterUseCase {
       new Date(),
     );
     //todo create event
-   /* const response = await this.merchantRepo.save(user);
-    this.eventEmitter.emit('user.registered', {
+   const response = await this.merchantRepo.save(user);
+   /* this.eventEmitter.emit('user.registered', {
       merchantId:  response.id,
       email: response.email
     });*/

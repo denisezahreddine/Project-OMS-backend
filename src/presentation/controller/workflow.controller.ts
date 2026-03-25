@@ -6,6 +6,7 @@ import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchan
 import { CreateWorkflowDto } from '../dto/create-workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
 import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
+import {ApiProperty} from "@nestjs/swagger";
 
 @Controller('workflows')
 export class WorkflowController {
@@ -18,6 +19,7 @@ export class WorkflowController {
   ) {}
 
   // POST /workflows
+  @ApiProperty({ example: 'Mon Workflow' })
   @Post()
   async create(@Body() dto: CreateWorkflowDto) {
     // TODO: récupérer merchantId depuis le token auth
