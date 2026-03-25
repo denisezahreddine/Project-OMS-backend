@@ -4,7 +4,6 @@ import { ApplicationModule } from './application/application.module';
 import { DomainModule } from './domain/domain.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { PresentationModule } from './presentation/presentation.module';
-import { WorkflowModule } from './modules/workflow.module';
 
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { WorkflowModule } from './modules/workflow.module';
     DomainModule,
     InfrastructureModule,
     PresentationModule,
-    WorkflowModule,
   ],
   controllers: [],
   providers: [],
