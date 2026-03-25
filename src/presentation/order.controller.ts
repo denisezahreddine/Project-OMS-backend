@@ -1,22 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import {RegisterDto} from "./dto/register.dto";
-import {RegisterUseCase} from "../application/usecases/register.usecase";
+import { Controller, Post, Body, InternalServerErrorException } from '@nestjs/common';
+import {CreateOrderUseCase} from "../application/usecases/order.usecases";
+import {CreateOrderDto} from "./dto/order.dto";
 
-@Controller('auth')
-export class AuthController {
-    constructor(private registerUseCase: RegisterUseCase) {}
 
-    @Post('register')
-    async register(@Body() dto: RegisterDto) {
-        const user = await this.registerUseCase.execute(
-            dto.email,
-            dto.name,
-            dto.password,
-        );
+@Controller('/orders')
+export class OrderController {
+    constructor(
+        private readonly createOrderUseCase: CreateOrderUseCase
+    ) {}
 
-        return {
-            message: 'User created successfully',
-            userId: user.id,
-        };
+    @Post()
+    async create(@Body() createOrderDto: CreateOrderDto) {
+        try {
+            const result = await this.createOrderUseCase.execute(createOrderDto);
+
+            return {
+                message: 'Order created successfully and merchant notified',
+                orderId: result.id,
+                total: result.totalAmount,
+            };
+        } catch (error) {
+            // Tu peux affiner la gestion d'erreur selon le type d'exception métier
+            throw new InternalServerErrorException(error.message);
+        }
     }
 }

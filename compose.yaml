@@ -1,0 +1,40 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: app-mongo
+    # Added --noauth and --bind_ip_all to ensure accessibility
+    command: ["--replSet", "rs0", "--bind_ip_all", "--noauth"]
+    ports:
+      - '27017:27017'
+    healthcheck:
+      test: |
+        mongosh --quiet --eval "
+          try {
+            if (rs.status().ok) {
+              quit(0);
+            }
+          } catch (e) {
+            rs.initiate({
+              _id: 'rs0',
+              members: [{ _id: 0, host: 'localhost:27017' }]
+            });
+            quit(0);
+          }
+        "
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: app-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongo-data:
+  redis-data:

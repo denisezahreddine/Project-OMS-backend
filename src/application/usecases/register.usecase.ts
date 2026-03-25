@@ -1,10 +1,9 @@
 // application/auth/use-cases/register.usecase.ts
 import * as bcrypt from 'bcrypt';
-import {User} from "../../../domain/models/user.entity";
 import {Injectable} from "@nestjs/common";
-import {MerchantRepository} from "../../../domain/repositories/merchant.repository";
-import {MerchantEntity} from "../../../domain/models/merchant.entity";
-import {CustomErrorException} from "../../../domain/exceptions/custom.error.exceptions";
+import {MerchantRepository} from "../../domain/repositories/merchant.repository";
+import {MerchantEntity} from "../../domain/models/merchant.entity";
+import {CustomErrorException} from "../../domain/exceptions/custom.error.exceptions";
 @Injectable()
 export class RegisterUseCase {
     constructor(

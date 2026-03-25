@@ -1,29 +1,35 @@
 
 import {Injectable} from "@nestjs/common";
+import {CustomErrorException} from "../exceptions/custom.error.exceptions";
 
 @Injectable()
 export class MerchantEntity {
-    private constructor(
+    constructor(
         public readonly id: string,
         public email: string,
         public name: string | null,
         public password: string,
-        public readonly createdAt,
-        public readonly updatedAt
+        public readonly createdAt: Date,
+        public readonly updatedAt: Date
 
     ) {
     }
 
-    static create(id: string, name: string, email: string, password: string,createdAt,updatedAt ): MerchantEntity {
+    static create(id: string,
+                  name: string | null,
+                  email: string,
+                  password: string,
+                  createdAt: Date, // 👈 Doit être Date
+                  updatedAt: Date ): MerchantEntity {
         if (!email.includes('@')) {
-            throw new Error('Invalid email');
+            throw new CustomErrorException('Invalid email');
         }
 
         if (password.length < 6) {
-            throw new Error('Password too short');
+            throw new CustomErrorException('Password too short');
         }
 
-        return new MerchantEntity(id, name, email, password,createdAt,updatedAt);
+        return new MerchantEntity(id, email, name, password,createdAt,updatedAt);
     }
 
     getPassword() {

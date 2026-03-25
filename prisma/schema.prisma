@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../node_modules/@prisma/mongo/client"
+
+}
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  output   = "../prisma/generated-classes"
+}
+
+datasource db {
+  provider = "mongodb"
+  url = env("DATABASE_URL")
+}
+
+model Merchant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Ajout de la relation inverse requise par Prisma
+  orders    Order[]
+}
+
+model Order {
+  // Correction : MongoDB nécessite @map("_id") et @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Correction : Le champ de relation doit aussi être un ObjectId
+  merchantId    String      @db.ObjectId
+  customerEmail String
+  totalAmount   Float
+  status        String      @default("PENDING")
+  createdAt     DateTime    @default(now())
+
+  merchant      Merchant    @relation(fields: [merchantId], references: [id])
+  items         OrderItem[]
+}
+
+model OrderItem {
+  // Correction : MongoDB nécessite @map("_id") et @db.ObjectId
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Correction : Le champ de relation doit aussi être un ObjectId
+  orderId   String @db.ObjectId
+  productId String
+  quantity  Int
+  price     Float
+
+  order     Order  @relation(fields: [orderId], references: [id])
+}

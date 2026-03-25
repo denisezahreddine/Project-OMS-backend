@@ -1,7 +1,8 @@
-import {Merchant} from "../models/merchant.domain";
+import {Injectable} from "@nestjs/common";
+import {MerchantEntity} from "../models/merchant.entity";
 
 @Injectable()
-export interface MerchantRepository {
-    save(merchant: Partial<Merchant>): Promise<Merchant>;
-    findByEmail(email: string): Promise<Merchant | null>;
+export abstract class MerchantRepository {
+    abstract save(merchant: Partial<MerchantEntity>): Promise<MerchantEntity>;
+    abstract findByEmail(email: string): Promise<MerchantEntity | null>;
 }
