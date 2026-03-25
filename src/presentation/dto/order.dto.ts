@@ -1,26 +1,38 @@
-import { IsEmail, IsArray, IsString, IsNotEmpty, ValidateNested, IsNumber, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsArray,
+  IsString,
+  IsNotEmpty,
+  ValidateNested,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class OrderItemDto {
-    @IsString() @IsNotEmpty()
-    productId: string;
+  @IsString()
+  @IsNotEmpty()
+  productId: string;
 
-    @IsNumber() @Min(1)
-    quantity: number;
+  @IsNumber()
+  @Min(1)
+  quantity: number;
 
-    @IsNumber() @Min(0)
-    price: number;
+  @IsNumber()
+  @Min(0)
+  price: number;
 }
 
 export class CreateOrderDto {
-    @IsString() @IsNotEmpty()
-    merchantId: string;
+  @IsString()
+  @IsNotEmpty()
+  merchantId: string;
 
-    @IsEmail()
-    customerEmail: string;
+  @IsEmail()
+  customerEmail: string;
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => OrderItemDto)
-    items: OrderItemDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OrderItemDto)
+  items: OrderItemDto[];
 }

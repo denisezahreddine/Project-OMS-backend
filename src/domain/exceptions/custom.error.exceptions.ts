@@ -1,6 +1,6 @@
 export class CustomErrorException extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = 'CustomErrorException';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'CustomErrorException';
+  }
 }

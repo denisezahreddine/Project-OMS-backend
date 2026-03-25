@@ -1,4 +1,3 @@
-// infrastructure/common/filters/domain-exception.filter.ts
 import {
   ExceptionFilter,
   Catch,
@@ -6,15 +5,14 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { CustomErrorException } from './custom.error.exceptions';
+import { CustomErrorException } from '../../domain/exceptions/custom.error.exceptions';
 
-@Catch(CustomErrorException) // On attrape uniquement nos erreurs métier
+@Catch(CustomErrorException)
 export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: CustomErrorException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    // On définit le code HTTP selon le type d'erreur
     let status = HttpStatus.BAD_REQUEST;
 
     if (exception.name === 'EntityNotFoundException') {

@@ -1,35 +1,69 @@
-// src/order.module.ts
-import {Module} from "@nestjs/common";
-import {PrismaService} from "../infrastructure/database/prisma.service";
-import {AuthController} from "../presentation/auth.controller";
-import {RegisterUseCase} from "../application/usecases/register.usecase";
-import {MerchantRepository} from "../domain/repositories/merchant.repository";
-import {MerchantRepositoryImpl} from "../infrastructure/repository/merchant.repository";
-import {OrderController} from "../presentation/order.controller";
-import {CreateOrderUseCase} from "../application/usecases/order.usecases";
-import {OrderRepositoryImpl} from "../infrastructure/repository/order.repository";
-import {IOrderRepository} from "../domain/repositories/order.repository";
-import {EmailNotifierAdapter} from "../infrastructure/adapters/email.notifier";
-import {EmailNotifier} from "../domain/repositories/email.notifier";
+import { Module } from '@nestjs/common';
+import { MerchantRepository } from '../domain/ports/merchant.repository';
+import { MerchantRepositoryImpl } from './adapters/merchant.repository';
+import { IOrderRepository } from '../domain/ports/order.repository';
+import { OrderRepositoryImpl } from './adapters/order.repository';
+import { EmailNotifier } from '../domain/ports/email.notifier';
+import { EmailNotifierAdapter } from './adapters/email.notifier';
+import { PrismaService } from './database/prisma.service';
+import { WorkflowEngineService } from './workflow-engine/workflow-engine.service';
+import { WorkflowRepository } from '../domain/ports/workflow.repository';
+import { PrismaWorkflowRepository } from './adapters/workflow.repository';
+import { WorkflowEnginePort } from '../domain/ports/workflow-engine.port';
+import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
+import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
+import { ActionFactory } from './workflow-engine/action-factory.service';
+import { WorkflowListener } from './workflow-engine/workflow.listener';
+import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
+import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handler';
 
-// infrastructure.module.ts
 @Module({
-    providers: [
-        PrismaService,
-        // On lie l'interface (IOrderRepository) à l'implémentation ici
-        {
-            provide: MerchantRepository,
-            useClass: MerchantRepositoryImpl
-        },
-        {
-            provide: IOrderRepository,
-            useClass: OrderRepositoryImpl
-        },
-        {
-            provide: EmailNotifier,
-            useClass: EmailNotifierAdapter
-        },
-    ],
-    exports: [MerchantRepository,IOrderRepository, EmailNotifier, PrismaService],
+  imports: [],
+  providers: [
+    PrismaService,
+    {
+      provide: MerchantRepository,
+      useClass: MerchantRepositoryImpl,
+    },
+    {
+      provide: IOrderRepository,
+      useClass: OrderRepositoryImpl,
+    },
+    {
+      provide: EmailNotifier,
+      useClass: EmailNotifierAdapter,
+    },
+    {
+      provide: WorkflowRepository,
+      useClass: PrismaWorkflowRepository,
+    },
+    // Workflow engine (port → implémentation)
+    WorkflowEngineService,
+    {
+      provide: WorkflowEnginePort,
+      useExisting: WorkflowEngineService,
+    },
+    NotifyAdminHandler,
+    NotifyUserHandler,
+    CreateLogHandler,
+    CreateTaskHandler,
+    // Factory
+    ActionFactory,
+    // Listener d'événements
+    WorkflowListener,
+  ],
+  exports: [
+    MerchantRepository,
+    IOrderRepository,
+    EmailNotifier,
+    WorkflowRepository,
+    WorkflowEnginePort,
+    NotifyAdminHandler,
+    NotifyUserHandler,
+    CreateLogHandler,
+    CreateTaskHandler,
+    ActionFactory,
+    WorkflowListener,
+  ],
 })
 export class InfrastructureModule {}
