@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { WorkflowEngineUsecase } from '../../domain/usecases/workflow-engine.usecase';
+import { WorkflowEngineUsecase } from '../domain/usecases/workflow-engine.usecase';
 
 @Injectable()
 export class WorkflowListener {

@@ -12,7 +12,7 @@ import { PrismaWorkflowRepository } from './adapters/workflow.repository';
 import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
 import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
 import { ActionFactory } from './workflow-engine/action-factory.service';
-import { WorkflowListener } from './workflow-engine/workflow.listener';
+import { WorkflowListener } from '../presentation/workflow.listener';
 import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
 import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handler';
 
@@ -44,8 +44,7 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
     CreateTaskHandler,
     // Factory
     ActionFactory,
-    // Listener d'événements
-    WorkflowListener,
+
   ],
   exports: [
     MerchantPort,
@@ -56,8 +55,6 @@ import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handle
     NotifyUserHandler,
     CreateLogHandler,
     CreateTaskHandler,
-    ActionFactory,
-    WorkflowListener,
-  ],
+    ActionFactory,],
 })
 export class InfrastructureModule {}
