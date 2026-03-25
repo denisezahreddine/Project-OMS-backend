@@ -1,8 +1,8 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../node_modules/@prisma/mongo/client"
-
+  output   = "../node_modules/@prisma/mongo/client"
 }
+
 generator prismaClassGenerator {
   provider = "prisma-class-generator"
   output   = "../prisma/generated-classes"
@@ -10,45 +10,66 @@ generator prismaClassGenerator {
 
 datasource db {
   provider = "mongodb"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Merchant {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  email     String     @unique
   name      String?
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Ajout de la relation inverse requise par Prisma
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   orders    Order[]
+  workflows Workflow[]
 }
 
 model Order {
-  // Correction : MongoDB nécessite @map("_id") et @db.ObjectId
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
-
-  // Correction : Le champ de relation doit aussi être un ObjectId
   merchantId    String      @db.ObjectId
+  merchant      Merchant    @relation(fields: [merchantId], references: [id])
   customerEmail String
   totalAmount   Float
   status        String      @default("PENDING")
   createdAt     DateTime    @default(now())
-
-  merchant      Merchant    @relation(fields: [merchantId], references: [id])
   items         OrderItem[]
 }
 
 model OrderItem {
-  // Correction : MongoDB nécessite @map("_id") et @db.ObjectId
   id        String @id @default(auto()) @map("_id") @db.ObjectId
-
-  // Correction : Le champ de relation doit aussi être un ObjectId
   orderId   String @db.ObjectId
+  order     Order  @relation(fields: [orderId], references: [id])
   productId String
   quantity  Int
   price     Float
+}
 
-  order     Order  @relation(fields: [orderId], references: [id])
+model Workflow {
+  id         String              @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  trigger    String
+  isActive   Boolean             @default(true)
+  merchantId String              @db.ObjectId
+  merchant   Merchant            @relation(fields: [merchantId], references: [id])
+  actions    WorkflowAction[]
+  executions WorkflowExecution[]
+  createdAt  DateTime            @default(now())
+}
+
+model WorkflowAction {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  workflowId String   @db.ObjectId
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+  type       String
+  order      Int
+  config     Json?
+}
+
+model WorkflowExecution {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  workflowId String   @db.ObjectId
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+  status     String
+  logs       String[]
+  createdAt  DateTime @default(now())
 }

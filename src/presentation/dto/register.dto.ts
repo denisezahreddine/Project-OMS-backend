@@ -1,6 +1,13 @@
-// presentation/auth/dto/register.dto.ts
+import { IsString, IsEmail, MinLength } from 'class-validator';
+
 export class RegisterDto {
-    email: string;
-    name: string;
-    password: string;
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  @MinLength(6)
+  password: string;
 }
