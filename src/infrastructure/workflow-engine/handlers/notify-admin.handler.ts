@@ -9,8 +9,10 @@ export class NotifyAdminHandler implements ActionHandler {
   private readonly logger = new Logger(NotifyAdminHandler.name);
 
   execute(context: ActionContext): Promise<void> {
+    const data = context.eventData as Record<string, unknown>;
+    const merchantId = context.merchantId ?? data?.merchantId;
     this.logger.log(
-      `Admin notifie — merchant: ${context.merchantId} — data: ${JSON.stringify(context.eventData)}`,
+      `Admin notifie — merchant: ${merchantId} — data: ${JSON.stringify(context.eventData)}`,
     );
     return Promise.resolve();
   }

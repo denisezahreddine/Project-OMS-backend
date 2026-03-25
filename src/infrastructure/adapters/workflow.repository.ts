@@ -26,10 +26,14 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
 
   async findByTrigger(
     trigger: string,
-    merchantId: string,
+    merchantId?: string,
   ): Promise<WorkflowData[]> {
     return this.prisma.workflow.findMany({
-      where: { trigger, merchantId, isActive: true },
+      where: {
+        trigger,
+        isActive: true,
+        ...(merchantId ? { merchantId } : {}),
+      },
       include: {
         actions: { orderBy: { order: 'asc' } },
       },

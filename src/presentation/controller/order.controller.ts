@@ -2,15 +2,19 @@ import {
   Controller,
   Post,
   Body,
+  UseGuards,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateOrderUseCase } from '../../domain/usecases/order.usecases';
 import { CreateOrderDto } from '../dto/order.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('/orders')
 export class OrderController {
   constructor(private readonly createOrderUseCase: CreateOrderUseCase) {}
 
+  // POST /orders
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     try {
@@ -22,7 +26,6 @@ export class OrderController {
         total: result.totalAmount,
       };
     } catch (error) {
-      // Tu peux affiner la gestion d'erreur selon le type d'exception métier
       throw new InternalServerErrorException((error as Error).message);
     }
   }

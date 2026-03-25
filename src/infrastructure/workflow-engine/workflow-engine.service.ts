@@ -19,7 +19,7 @@ export class WorkflowEngineService implements WorkflowEnginePort {
 
   async dispatch(
     trigger: string,
-    merchantId: string,
+    merchantId: string | undefined,
     eventData: unknown,
   ): Promise<void> {
     this.logger.log(`Evenement recu: ${trigger} pour merchant: ${merchantId}`);

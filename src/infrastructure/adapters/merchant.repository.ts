@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { MerchantPort } from '../../domain/ports/merchant.port';
-import { MerchantEntity } from '../../domain/models/merchant.entity';
+import { MerchantEntity, Role } from '../../domain/models/merchant.entity';
 
 @Injectable()
 export class MerchantRepositoryImpl implements MerchantPort {
@@ -20,6 +20,23 @@ export class MerchantRepositoryImpl implements MerchantPort {
       prismaRecord.name,
       prismaRecord.email,
       prismaRecord.password,
+      prismaRecord.role as Role,
+      prismaRecord.createdAt,
+      prismaRecord.updatedAt,
+    );
+  }
+
+  async findById(id: string): Promise<MerchantEntity | null> {
+    const prismaRecord = await this.prisma.merchant.findUnique({
+      where: { id },
+    });
+    if (!prismaRecord) return null;
+    return MerchantEntity.create(
+      prismaRecord.id,
+      prismaRecord.name,
+      prismaRecord.email,
+      prismaRecord.password,
+      prismaRecord.role as Role,
       prismaRecord.createdAt,
       prismaRecord.updatedAt,
     );
@@ -31,6 +48,7 @@ export class MerchantRepositoryImpl implements MerchantPort {
         email: user.email,
         name: user.name,
         password: user.getPassword(),
+        role: user.role,
       },
     });
 
@@ -39,6 +57,7 @@ export class MerchantRepositoryImpl implements MerchantPort {
       prismaRecord.name,
       prismaRecord.email,
       prismaRecord.password,
+      prismaRecord.role as Role,
       prismaRecord.createdAt,
       prismaRecord.updatedAt,
     );

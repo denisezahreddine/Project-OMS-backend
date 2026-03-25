@@ -1,5 +1,5 @@
 export interface ActionContext {
-  merchantId: string;
+  merchantId?: string;
   eventData: unknown;
 }
 

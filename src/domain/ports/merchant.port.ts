@@ -5,4 +5,5 @@ import { MerchantEntity } from '../models/merchant.entity';
 export abstract class MerchantPort {
   abstract save(merchant: Partial<MerchantEntity>): Promise<MerchantEntity>;
   abstract findByEmail(email: string): Promise<MerchantEntity | null>;
+  abstract findById(id: string): Promise<MerchantEntity | null>;
 }

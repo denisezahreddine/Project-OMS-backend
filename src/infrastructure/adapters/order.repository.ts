@@ -7,7 +7,7 @@ import {
   OrderItem,
   OrderStatus,
 } from '../../domain/models/order.entity';
-import { MerchantEntity } from '../../domain/models/merchant.entity';
+import { MerchantEntity, Role } from '../../domain/models/merchant.entity';
 
 @Injectable()
 export class OrderRepositoryImpl implements IOrderRepository {
@@ -56,6 +56,7 @@ export class OrderRepositoryImpl implements IOrderRepository {
       prismaRecord.name,
       prismaRecord.email,
       prismaRecord.password,
+      prismaRecord.role as Role,
       prismaRecord.createdAt,
       prismaRecord.updatedAt,
     );
