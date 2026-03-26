@@ -1,8 +1,8 @@
 ### Variables
 @baseUrl = http://localhost:3000
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM1NWE0ZDNhZjY4M2U2MDBiOGMzYjIiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJtZXJjaGFudElkIjoiNjljNTVhNGQzYWY2ODNlNjAwYjhjM2IyIiwiaWF0IjoxNzc0NTQxNTA2LCJleHAiOjE3NzQ2Mjc5MDZ9.y5D_9HhAYoS0dtTdU84pPYfamsz7qiKRpxkDKPgNmVg
-@merchantId = 69c55a4d3af683e600b8c3b2
-@workflowId = 69c575c2bf51f2ae875a9665
+@merchantId = 69c562ccc3e90ec52417eb6e
+@workflowId = 69c5653076b1c1acb368cc7f
 @orderId = 69c50e3a1f21c990fb0b87d1
 
 ###########################################################
@@ -270,6 +270,12 @@ Authorization: Bearer {{token}}
 
 ### 15. changement de status (order status)
 POST {{baseUrl}}/orders/{{orderId}}/status
+###########################################################
+### ETAPE 6 — TESTER MANUAL TRIGGER
+###########################################################
+
+### 20. Créer un workflow manual.trigger
+POST {{baseUrl}}/workflows
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -322,3 +328,36 @@ Authorization: Bearer {{token}}
   "type": "create_log",
   "order": 2
 }
+  "name": "Workflow manuel",
+  "trigger": "manual.trigger"
+}
+
+###
+
+### 21. Ajouter action create_task → copier workflowId dans @workflowId
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_task",
+  "order": 1
+}
+
+###
+
+### 22. Déclencher manuellement le workflow
+POST {{baseUrl}}/workflows/{{workflowId}}/trigger
+Authorization: Bearer {{token}}
+
+###
+
+### 23. Voir les exécutions → doit afficher status: success, logs: [create_task: OK]
+GET {{baseUrl}}/workflows/{{workflowId}}/executions
+Authorization: Bearer {{token}}
+
+###
+
+### 24. Lister les tâches créées en base
+GET {{baseUrl}}/tasks
+Authorization: Bearer {{token}}

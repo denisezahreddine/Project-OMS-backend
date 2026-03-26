@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import {
   WorkflowRepository,
   WorkflowData,
@@ -45,6 +45,20 @@ export class WorkflowEngineUsecase {
         await this.executeWorkflow(workflow, {merchantId, eventData});
       }
     }
+  }
+
+  async dispatchById(id: string, userId: string): Promise<void> {
+    const workflow = await this.workflowRepo.findById(id);
+    if (!workflow) {
+      throw new NotFoundException(`Workflow ${id} introuvable`);
+    }
+    if (workflow.merchantId !== userId) {
+      throw new ForbiddenException('Ce workflow ne vous appartient pas');
+    }
+    if (!workflow.isActive) {
+      throw new ForbiddenException('Ce workflow est désactivé');
+    }
+    await this.executeWorkflow(workflow, { merchantId: userId, eventData: null });
   }
 
   private evaluateCondition(condition: WorkflowCondition, eventData: unknown): boolean {

@@ -92,8 +92,8 @@ export class WorkflowController {
 
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
-  async triggerManually(@Request() req) {
-    await this.triggerManual.dispatch('manual.trigger',req.user.id,null);
+  async triggerManually(@Param('id') id: string, @Request() req) {
+    await this.triggerManual.dispatchById(id, req.user.id);
     return { message: 'Workflow declenche manuellement' };
   }
 

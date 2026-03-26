@@ -16,18 +16,10 @@ export class ActionFactory {
 
   getHandler(actionType: string): ActionHandler {
     switch (actionType) {
-      case 'notify_admin':
-        return this.notifyAdmin;
-
-      case 'notify_user':
-        return this.notifyUser;
-
-      case 'create_log':
-        return this.createLog;
-
-      case 'create_task':
-        return this.createTask;
-
+      case 'notify_admin':  return this.notifyAdmin;
+      case 'notify_user':   return this.notifyUser;
+      case 'create_log':    return this.createLog;
+      case 'create_task':   return this.createTask;
       default:
         throw new Error(`Action inconnue: ${actionType}`);
     }

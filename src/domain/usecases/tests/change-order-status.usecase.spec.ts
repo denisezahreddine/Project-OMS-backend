@@ -1,7 +1,7 @@
-import { ChangeOrderStatusUseCase } from './change-order-status.usecase';
-import { IOrderRepository } from '../ports/order.repository';
-import { OrderEntity, OrderItem, OrderStatus } from '../models/order.entity';
-import { CustomErrorException } from '../exceptions/custom.error.exceptions';
+import { IOrderRepository } from '../../ports/order.repository';
+import { OrderEntity, OrderItem, OrderStatus } from '../../models/order.entity';
+import { CustomErrorException } from '../../exceptions/custom.error.exceptions';
+import { ChangeOrderStatusUseCase } from '../change-order-status.usecase';
 
 const baseOrder = OrderEntity.create(
   'order-1',
@@ -19,12 +19,16 @@ const mockOrderRepo = {
   findMerchantEmail: jest.fn(),
 } as unknown as IOrderRepository;
 
+const mockEventEmitter = {
+  emit: jest.fn(),
+};
+
 describe('ChangeOrderStatusUseCase', () => {
   let useCase: ChangeOrderStatusUseCase;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useCase = new ChangeOrderStatusUseCase(mockOrderRepo);
+    useCase = new ChangeOrderStatusUseCase(mockOrderRepo,mockEventEmitter);
   });
 
   it('doit passer de PENDING a PAID', async () => {
