@@ -1,8 +1,8 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM1MGNmYjFmMjFjOTkwZmIwYjg3Y2MiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ1MjE2MDksImV4cCI6MTc3NDYwODAwOX0.GEoxzKk2KDUS89QG9J52-coIiNS_aByR21fnHqy1Uok
-@merchantId = 69c50cfb1f21c990fb0b87cc
-@workflowId = 69c52c9dba4a2e05f2056aec
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM1NWE0ZDNhZjY4M2U2MDBiOGMzYjIiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJtZXJjaGFudElkIjoiNjljNTVhNGQzYWY2ODNlNjAwYjhjM2IyIiwiaWF0IjoxNzc0NTQxNTA2LCJleHAiOjE3NzQ2Mjc5MDZ9.y5D_9HhAYoS0dtTdU84pPYfamsz7qiKRpxkDKPgNmVg
+@merchantId = 69c55a4d3af683e600b8c3b2
+@workflowId = 69c55afa3af683e600b8c3b3
 @orderId = 69c50e3a1f21c990fb0b87d1
 
 ###########################################################
@@ -78,10 +78,10 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "merchant@oms22.com",
+  "email": "merchant@oms.com",
   "name": "John Doe22",
   "password": "password123",
-  "role": "merchant22"
+  "role": "merchant"
 }
 
 ###########################################################
