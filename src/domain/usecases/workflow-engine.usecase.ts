@@ -42,7 +42,7 @@ export class WorkflowEngineUsecase {
           this.logger.log(`Workflow ${workflow.name} ignore: condition non satisfaite`);
           continue;
         }
-        await this.executeWorkflow(workflow, {merchantId, eventData});
+        await this.executeWorkflow(workflow, { merchantId, workflowId: workflow.id, eventData });
       }
     }
   }
@@ -58,7 +58,7 @@ export class WorkflowEngineUsecase {
     if (!workflow.isActive) {
       throw new ForbiddenException('Ce workflow est désactivé');
     }
-    await this.executeWorkflow(workflow, { merchantId: userId, eventData: null });
+    await this.executeWorkflow(workflow, { merchantId: userId, workflowId: workflow.id, eventData: null });
   }
 
   private evaluateCondition(condition: WorkflowCondition, eventData: unknown): boolean {

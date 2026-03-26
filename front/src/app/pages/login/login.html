@@ -1,0 +1,10 @@
+<div class="login-wrapper">
+  <div class="login-box">
+    <h1>Workflow Dashboard</h1>
+    <h2>Connexion</h2>
+    <input type="email" [(ngModel)]="email" placeholder="Email" />
+    <input type="password" [(ngModel)]="password" placeholder="Mot de passe" (keyup.enter)="login()" />
+    <button (click)="login()">Se connecter</button>
+    @if (error) { <p class="error">{{ error }}</p> }
+  </div>
+</div>

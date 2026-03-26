@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Workflow Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f4f5f7; color: #333; }
+
+    header {
+      background: #1e293b; color: white;
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.2rem; }
+    #user-info { font-size: 0.85rem; opacity: 0.7; }
+
+    .login-box {
+      max-width: 400px; margin: 80px auto;
+      background: white; border-radius: 8px;
+      padding: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .login-box h2 { margin-bottom: 20px; font-size: 1.1rem; }
+
+    input, select {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #ddd; border-radius: 6px;
+      margin-bottom: 10px; font-size: 0.9rem;
+    }
+
+    .btn {
+      padding: 7px 14px; border: none; border-radius: 6px;
+      cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    }
+    .btn-blue  { background: #3b82f6; color: white; }
+    .btn-blue:hover  { background: #2563eb; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-green:hover { background: #15803d; }
+    .btn-red   { background: #dc2626; color: white; }
+    .btn-red:hover   { background: #b91c1c; }
+    .btn-gray  { background: #64748b; color: white; }
+    .btn-gray:hover  { background: #475569; }
+    .btn-purple { background: #7c3aed; color: white; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn-full  { width: 100%; padding: 10px; font-size: 0.95rem; }
+    .error { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
+
+    .container { max-width: 1060px; margin: 28px auto; padding: 0 16px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .toolbar h2 { font-size: 1rem; font-weight: 600; }
+    .toolbar-btns { display: flex; gap: 8px; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 10px;
+      padding: 28px; width: 420px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal h3 { margin-bottom: 18px; font-size: 1rem; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+    .workflow-card {
+      background: white; border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .workflow-header {
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .workflow-header-left { display: flex; align-items: center; gap: 10px; flex: 1; cursor: pointer; }
+    .workflow-name { font-weight: 600; font-size: 0.95rem; }
+    .workflow-sub { font-size: 0.8rem; color: #888; margin-top: 4px; display: flex; gap: 8px; align-items: center; }
+    .workflow-btns { display: flex; gap: 6px; align-items: center; }
+
+    .badge {
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-active   { background: #dcfce7; color: #16a34a; }
+    .badge-inactive { background: #fee2e2; color: #dc2626; }
+    .badge-success  { background: #dcfce7; color: #16a34a; }
+    .badge-error    { background: #fee2e2; color: #dc2626; }
+    .badge-trigger  { background: #e0f2fe; color: #0369a1; }
+
+    .workflow-body { padding: 16px 20px; display: none; }
+    .workflow-body.open { display: block; }
+
+    .section-label {
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; color: #94a3b8;
+      margin: 0 0 8px;
+    }
+    .actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; align-items: center; }
+    .action-chip {
+      padding: 5px 12px; border-radius: 99px;
+      font-size: 0.8rem; background: #f1f5f9;
+      color: #475569; border: 1px solid #e2e8f0;
+    }
+    .add-action-row { margin: 10px 0 20px; display: flex; gap: 8px; }
+    .add-action-row select { margin: 0; width: auto; flex: 1; }
+    .add-action-row input  { margin: 0; width: 70px; }
+
+    .exec-item { border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
+    .exec-header {
+      padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #f8fafc; cursor: pointer;
+    }
+    .exec-header:hover { background: #f1f5f9; }
+    .exec-date { font-size: 0.8rem; color: #888; }
+    .logs {
+      padding: 12px 14px; display: none;
+      background: #0f172a; color: #94a3b8;
+      font-family: monospace; font-size: 0.78rem; line-height: 1.7;
+    }
+    .logs.open { display: block; }
+
+    .empty { text-align: center; color: #bbb; padding: 16px; font-size: 0.85rem; }
+    .chevron { transition: transform 0.2s; display: inline-block; margin-right: 6px; }
+    .chevron.open { transform: rotate(90deg); }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1e293b; color: white;
+      padding: 10px 18px; border-radius: 6px;
+      font-size: 0.85rem; display: none; z-index: 999;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Workflow Dashboard</h1>
+  <span id="user-info"></span>
+</header>
+
+<!-- LOGIN -->
+<div class="login-box" id="login-section">
+  <h2>Connexion</h2>
+  <input type="email" id="email" placeholder="Email" value="admin@oms.com" />
+  <input type="password" id="password" placeholder="Mot de passe" value="password123" />
+  <button class="btn btn-blue btn-full" onclick="login()">Se connecter</button>
+  <div class="error" id="login-error"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container" id="dashboard" style="display:none">
+  <div class="toolbar">
+    <h2>Mes Workflows</h2>
+    <div class="toolbar-btns">
+      <button class="btn btn-blue" onclick="loadWorkflows()">↻ Rafraîchir</button>
+      <button class="btn btn-green" onclick="openCreateModal()">+ Nouveau workflow</button>
+    </div>
+  </div>
+  <div id="workflows-list"></div>
+</div>
+
+<!-- MODAL CRÉER WORKFLOW -->
+<div class="modal-overlay" id="modal-create">
+  <div class="modal">
+    <h3>Nouveau Workflow</h3>
+    <input type="text" id="new-name" placeholder="Nom du workflow" />
+    <select id="new-trigger">
+      <option value="order.created">order.created</option>
+      <option value="user.registered">user.registered</option>
+      <option value="manual.trigger">manual.trigger</option>
+      <option value="updated.status">updated.status</option>
+    </select>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('modal-create')">Annuler</button>
+      <button class="btn btn-green" onclick="createWorkflow()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const BASE = 'http://localhost:3000';
+  let token = '';
+
+  async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch(`${BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) { document.getElementById('login-error').textContent = 'Email ou mot de passe incorrect'; return; }
+    const data = await res.json();
+    token = data.accessToken;
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('user-info').textContent = email;
+    loadWorkflows();
+  }
+
+  async function loadWorkflows() {
+    const res = await fetch(`${BASE}/workflows`, { headers: { Authorization: `Bearer ${token}` } });
+    const workflows = await res.json();
+    const container = document.getElementById('workflows-list');
+    if (!workflows.length) { container.innerHTML = '<div class="empty">Aucun workflow trouvé</div>'; return; }
+    container.innerHTML = workflows.map(w => renderWorkflow(w)).join('');
+    workflows.forEach(w => loadExecutions(w.id));
+  }
+
+  function renderWorkflow(w) {
+    const actions = w.actions.length
+      ? w.actions.map(a => `<span class="action-chip">${a.order}. ${a.type}</span>`).join('')
+      : '<span style="color:#bbb;font-size:0.82rem">Aucune action</span>';
+
+    const condition = w.condition
+      ? `<span style="font-size:0.78rem;color:#555">si ${w.condition.field} ${w.condition.operator} ${w.condition.value}</span>`
+      : '';
+
+    const manualBtn = w.trigger === 'manual.trigger'
+      ? `<button class="btn btn-purple" onclick="triggerManual('${w.id}', event)">▶ Déclencher</button>`
+      : '';
+
+    return `
+      <div class="workflow-card" id="card-${w.id}">
+        <div class="workflow-header">
+          <div class="workflow-header-left" onclick="toggleBody('${w.id}')">
+            <div>
+              <div class="workflow-name"><span class="chevron" id="chev-${w.id}">›</span>${w.name}</div>
+              <div class="workflow-sub">
+                <span class="badge badge-trigger">${w.trigger}</span>
+                ${condition}
+              </div>
+            </div>
+          </div>
+          <div class="workflow-btns">
+            <span class="badge ${w.isActive ? 'badge-active' : 'badge-inactive'}" id="status-${w.id}">
+              ${w.isActive ? 'Actif' : 'Inactif'}
+            </span>
+            ${manualBtn}
+            <button class="btn ${w.isActive ? 'btn-red' : 'btn-green'}" id="toggle-btn-${w.id}"
+              onclick="toggleWorkflow('${w.id}', ${w.isActive}, event)">
+              ${w.isActive ? 'Désactiver' : 'Activer'}
+            </button>
+          </div>
+        </div>
+        <div class="workflow-body" id="body-${w.id}">
+          <div class="section-label">Actions</div>
+          <div class="actions-row" id="actions-${w.id}">${actions}</div>
+          <div class="add-action-row">
+            <select id="action-type-${w.id}">
+              <option value="notify_admin">notify_admin</option>
+              <option value="notify_user">notify_user</option>
+              <option value="create_log">create_log</option>
+              <option value="create_task">create_task</option>
+            </select>
+            <input type="number" id="action-order-${w.id}" placeholder="Ordre" min="1" value="${w.actions.length + 1}" />
+            <button class="btn btn-blue" onclick="addAction('${w.id}')">+ Ajouter action</button>
+          </div>
+          <div class="section-label">Exécutions</div>
+          <div id="exec-${w.id}"><div class="empty">Chargement...</div></div>
+        </div>
+      </div>`;
+  }
+
+  async function createWorkflow() {
+    const name = document.getElementById('new-name').value.trim();
+    const trigger = document.getElementById('new-trigger').value;
+    if (!name) { showToast('Entrez un nom'); return; }
+    const res = await fetch(`${BASE}/workflows`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name, trigger })
+    });
+    if (!res.ok) { showToast('Erreur lors de la création'); return; }
+    closeModal('modal-create');
+    document.getElementById('new-name').value = '';
+    showToast('Workflow créé !');
+    loadWorkflows();
+  }
+
+  async function addAction(workflowId) {
+    const type = document.getElementById(`action-type-${workflowId}`).value;
+    const order = parseInt(document.getElementById(`action-order-${workflowId}`).value);
+    const res = await fetch(`${BASE}/workflows/${workflowId}/actions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ type, order })
+    });
+    if (!res.ok) { showToast('Erreur lors de l\'ajout'); return; }
+    showToast(`Action ${type} ajoutée !`);
+    loadWorkflows();
+  }
+
+  async function toggleWorkflow(id, isActive, event) {
+    event.stopPropagation();
+    const res = await fetch(`${BASE}/workflows/${id}/toggle`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) { showToast('Erreur lors du toggle'); return; }
+    const data = await res.json();
+    const active = data.isActive;
+    document.getElementById(`status-${id}`).className = `badge ${active ? 'badge-active' : 'badge-inactive'}`;
+    document.getElementById(`status-${id}`).textContent = active ? 'Actif' : 'Inactif';
+    const btn = document.getElementById(`toggle-btn-${id}`);
+    btn.className = `btn ${active ? 'btn-red' : 'btn-green'}`;
+    btn.textContent = active ? 'Désactiver' : 'Activer';
+    showToast(`Workflow ${active ? 'activé' : 'désactivé'}`);
+  }
+
+  async function triggerManual(id, event) {
+    event.stopPropagation();
+    const res = await fetch(`${BASE}/workflows/${id}/trigger`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) { const err = await res.json(); showToast(err.message || 'Erreur'); return; }
+    showToast('Workflow déclenché !');
+    setTimeout(() => { loadExecutions(id); }, 800);
+  }
+
+  async function loadExecutions(workflowId) {
+    const res = await fetch(`${BASE}/workflows/${workflowId}/executions`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const executions = await res.json();
+    const container = document.getElementById(`exec-${workflowId}`);
+    if (!container) return;
+    if (!executions.length) { container.innerHTML = '<div class="empty">Aucune exécution</div>'; return; }
+    container.innerHTML = executions.map(e => `
+      <div class="exec-item">
+        <div class="exec-header" onclick="toggleLogs('logs-${e.id}')">
+          <span class="badge ${e.status === 'success' ? 'badge-success' : 'badge-error'}">${e.status}</span>
+          <span class="exec-date">${new Date(e.createdAt).toLocaleString('fr-FR')}</span>
+        </div>
+        <div class="logs" id="logs-${e.id}">
+          ${e.logs.map(l => `<div>${l}</div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function openCreateModal() { document.getElementById('modal-create').classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function toggleBody(id) {
+    document.getElementById(`body-${id}`).classList.toggle('open');
+    document.getElementById(`chev-${id}`).classList.toggle('open');
+  }
+  function toggleLogs(id) { document.getElementById(id).classList.toggle('open'); }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>
