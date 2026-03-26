@@ -344,6 +344,32 @@ Authorization: Bearer {{token}}
   "order": 1
 }
 
+###########################################################
+### ETAPE 6 — TESTER MANUAL TRIGGER
+###########################################################
+
+### 20. Créer un workflow manual.trigger
+POST {{baseUrl}}/workflows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Workflow manuel",
+  "trigger": "manual.trigger"
+}
+
+###
+
+### 21. Ajouter action create_task → copier workflowId dans @workflowId
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_task",
+  "order": 1
+}
+
 ###
 
 ### 22. Déclencher manuellement le workflow
