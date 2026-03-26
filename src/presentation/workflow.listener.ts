@@ -32,6 +32,17 @@ export class WorkflowListener {
     await this.engine.dispatch('updated.status', data.merchantId, data);
   }
 
+  @OnEvent('order.notpaid')
+  async handleOrderNotPaid(data: {
+    merchantId: string;
+    orderId: string;
+    status: string;
+    customerEmail: string;
+  }) {
+    this.logger.log(`Event recu: order.notpaid`);
+    await this.engine.dispatch('order.notpaid', data.merchantId, data);
+  }
+
   @OnEvent('manual.trigger')
   async handleManualTrigger(data: { merchantId: string }) {
     this.logger.log(`Event recu: manual.trigger`);

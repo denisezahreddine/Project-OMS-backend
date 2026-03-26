@@ -5,6 +5,7 @@ import { MerchantEntity } from '../models/merchant.entity';
 export abstract class IOrderRepository {
   abstract save(order: OrderEntity): Promise<OrderEntity>;
   abstract findById(orderId: string): Promise<OrderEntity | null>;
+  abstract findByStatus(status: OrderStatus): Promise<OrderEntity[]>;
   abstract updateStatus(
     orderId: string,
     status: OrderStatus,
