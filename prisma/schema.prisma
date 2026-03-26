@@ -50,6 +50,7 @@ model Workflow {
   name       String
   trigger    String
   isActive   Boolean             @default(true)
+  condition  Json?
   merchantId String              @db.ObjectId
   merchant   Merchant            @relation(fields: [merchantId], references: [id])
   actions    WorkflowAction[]

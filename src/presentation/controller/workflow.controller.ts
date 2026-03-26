@@ -26,7 +26,7 @@ export class WorkflowController {
   // POST /workflows
   @Post()
   async create(@Body() dto: WorkflowDto, @Request() req) {
-    return this.createWorkflow.execute(dto.name, dto.trigger, req.user.id);
+    return this.createWorkflow.execute(dto.name, dto.trigger, req.user.id, dto.condition);
   }
   // POST /workflows/:id/actions
   @Post(':id/actions')
