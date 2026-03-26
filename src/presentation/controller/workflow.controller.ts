@@ -21,10 +21,8 @@ export class WorkflowController {
 
   // POST /workflows
   @Post()
-  async create(@Body() dto: CreateWorkflowDto) {
-    // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
-    return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
+  async create(@Body() dto: CreateWorkflowDto, @Request() req) {
+    return this.createWorkflow.execute(dto.name, dto.trigger, req.user.id);
   }
 
   // POST /workflows/:id/actions
@@ -35,9 +33,8 @@ export class WorkflowController {
 
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
-  async triggerManually() {
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
-    await this.triggerManual.dispatch('manual.trigger',merchantId,null);
+  async triggerManually(@Request() req) {
+    await this.triggerManual.dispatch('manual.trigger',req.user.id,null);
     return { message: 'Workflow declenche manuellement' };
   }
 
