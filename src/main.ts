@@ -31,7 +31,7 @@ async function bootstrap() {
                 description: 'Entrez votre token JWT',
                 in: 'header',
             },
-            'Authorization', // C'est l'ID de sécurité qu'on réutilisera plus tard
+            'access-token', // C'est l'ID de sécurité qu'on réutilisera plus tard
         )
         .build();
 

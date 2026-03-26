@@ -3,11 +3,13 @@ import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.use
 import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
 import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
 import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchant-workflows.usecase';
-import { CreateWorkflowDto } from '../dto/create-workflow.dto';
+import { WorkflowDto } from '../dto/workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
 import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import {ApiBearerAuth} from "@nestjs/swagger";
 
+@ApiBearerAuth('access-token') // <--- TRÈS IMPORTANT : Doit correspondre au nom dans main.ts
 @UseGuards(JwtAuthGuard)
 @Controller('workflows')
 export class WorkflowController {
@@ -21,10 +23,9 @@ export class WorkflowController {
 
   // POST /workflows
   @Post()
-  async create(@Body() dto: CreateWorkflowDto) {
-    // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
-    return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
+  async create(@Body() dto: WorkflowDto, @Request() req) {
+    const merchantIdFromToken = req.user.id;
+    return this.createWorkflow.execute(dto.name, dto.trigger, merchantIdFromToken);
   }
 
   // POST /workflows/:id/actions
