@@ -32,16 +32,6 @@ export class WorkflowCronService {
       `Cron: ${workflows.length} workflow(s) planifie(s) a declencher`,
     );
 
-    // Declenche chaque workflow via EventEmitter — comportement tracable
-    for (const workflow of workflows) {
-      this.logger.log(`Cron: declenchement workflow "${workflow.name}"`);
-      this.eventEmitter.emit('manual.trigger', {
-        merchantId: workflow.merchantId,
-        source: 'cron',
-        workflowId: workflow.id,
-      });
-    }
-
     const pendingOrders = await this.orderRepository.findByStatus(
       OrderStatus.PENDING,
     );

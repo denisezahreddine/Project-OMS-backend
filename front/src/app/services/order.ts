@@ -19,4 +19,8 @@ export class Order {
   registerUser(email: string, name: string, password: string, role: string) {
     return this.http.post<any>(`${BASE}/auth/register`, { email, name, password, role });
   }
+
+  changeStatus(orderId: string, status: string) {
+    return this.http.post<any>(`${BASE}/orders/${orderId}/status`, { status }, { headers: this.headers() });
+  }
 }

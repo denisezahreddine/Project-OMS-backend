@@ -4,6 +4,7 @@
     <div style="display:flex;gap:8px;align-items:center">
       <button class="btn btn-orange" (click)="showUserModal = true">+ Créer utilisateur</button>
       <button class="btn btn-teal" (click)="showOrderModal = true">+ Créer commande</button>
+      <button class="btn btn-blue" (click)="showStatusModal = true">✎ Statut commande</button>
       <button class="btn btn-gray" (click)="logout()">Déconnexion</button>
     </div>
   </header>
@@ -174,6 +175,23 @@
       <div class="modal-footer">
         <button class="btn btn-gray" (click)="showOrderModal = false">Annuler</button>
         <button class="btn btn-teal" (click)="createOrder()">Créer commande</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL CHANGER STATUT COMMANDE -->
+@if (showStatusModal) {
+  <div class="overlay" (click)="showStatusModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Changer statut commande <span class="trigger-hint">→ déclenche updated.status</span></h3>
+      <input type="text" [(ngModel)]="statusOrderId" placeholder="Order ID" />
+      <select [(ngModel)]="statusValue">
+        @for (s of orderStatuses; track s) { <option [value]="s">{{ s }}</option> }
+      </select>
+      <div class="modal-footer">
+        <button class="btn btn-gray" (click)="showStatusModal = false">Annuler</button>
+        <button class="btn btn-blue" (click)="changeOrderStatus()">Mettre à jour</button>
       </div>
     </div>
   </div>

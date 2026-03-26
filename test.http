@@ -268,14 +268,8 @@ Authorization: Bearer {{token}}
 
 ###
 
-### 15. changement de status (order status)
+### 15. changement de status (order status)SHIPPED
 POST {{baseUrl}}/orders/{{orderId}}/status
-###########################################################
-### ETAPE 6 — TESTER MANUAL TRIGGER
-###########################################################
-
-### 20. Créer un workflow manual.trigger
-POST {{baseUrl}}/workflows
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -295,7 +289,7 @@ Authorization: Bearer {{token}}
 
 ###
 
-### 17. Créer un workflow trigger updated.status
+### 17. Créer un workflow trigger order.notpaid
 POST {{baseUrl}}/workflows
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -328,21 +322,10 @@ Authorization: Bearer {{token}}
   "type": "create_log",
   "order": 2
 }
-  "name": "Workflow manuel",
-  "trigger": "manual.trigger"
-}
+
 
 ###
 
-### 21. Ajouter action create_task → copier workflowId dans @workflowId
-POST {{baseUrl}}/workflows/{{workflowId}}/actions
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "type": "create_task",
-  "order": 1
-}
 
 ###########################################################
 ### ETAPE 6 — TESTER MANUAL TRIGGER
@@ -376,11 +359,6 @@ Authorization: Bearer {{token}}
 POST {{baseUrl}}/workflows/{{workflowId}}/trigger
 Authorization: Bearer {{token}}
 
-###
-
-### 23. Voir les exécutions → doit afficher status: success, logs: [create_task: OK]
-GET {{baseUrl}}/workflows/{{workflowId}}/executions
-Authorization: Bearer {{token}}
 
 ###
 
