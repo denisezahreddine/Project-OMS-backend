@@ -1,5 +1,6 @@
 export interface ActionContext {
   merchantId?: string;
+  workflowId?: string;
   eventData: unknown;
 }
 export interface ActionResult {

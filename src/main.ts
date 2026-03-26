@@ -6,6 +6,7 @@ import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   // Applique le filtre à TOUTE l'application
   app.useGlobalFilters(new DomainExceptionFilter());
   // Étape CRUCIALE pour class-validator

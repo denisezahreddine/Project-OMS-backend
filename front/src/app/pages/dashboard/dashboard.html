@@ -1,0 +1,184 @@
+<div class="layout">
+  <header>
+    <span class="title">Workflow Dashboard</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-orange" (click)="showUserModal = true">+ Créer utilisateur</button>
+      <button class="btn btn-teal" (click)="showOrderModal = true">+ Créer commande</button>
+      <button class="btn btn-gray" (click)="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="toolbar">
+      <h2>Mes Workflows</h2>
+      <div class="toolbar-btns">
+        <button class="btn btn-blue" (click)="load()">↻ Rafraîchir</button>
+        <button class="btn btn-green" (click)="showCreateModal = true">+ Nouveau</button>
+      </div>
+    </div>
+
+    @if (workflows.length === 0) {
+      <div class="empty">Aucun workflow trouvé</div>
+    }
+
+    @for (w of workflows; track w.id) {
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left" (click)="toggleOpen(w.id)">
+            <span class="chevron" [class.open]="isOpen(w.id)">›</span>
+            <div>
+              <div class="wf-name">{{ w.name }}</div>
+              <div class="wf-sub">
+                <span class="badge badge-trigger">{{ w.trigger }}</span>
+                @if (w.condition) {
+                  <span class="condition">si {{ w.condition.field }} {{ w.condition.operator }} {{ w.condition.value }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="card-btns">
+            <span class="badge" [class.badge-active]="w.isActive" [class.badge-inactive]="!w.isActive">
+              {{ w.isActive ? 'Actif' : 'Inactif' }}
+            </span>
+            @if (w.trigger === 'manual.trigger') {
+              <button class="btn btn-purple" (click)="triggerManual(w)">▶ Déclencher</button>
+            }
+            <button class="btn" [class.btn-red]="w.isActive" [class.btn-green]="!w.isActive" (click)="toggle(w)">
+              {{ w.isActive ? 'Désactiver' : 'Activer' }}
+            </button>
+          </div>
+        </div>
+
+        @if (isOpen(w.id)) {
+          <div class="card-body">
+            <div class="section-label">Actions</div>
+            <div class="actions-row">
+              @for (a of w.actions; track a.id) {
+                <span class="chip">{{ a.order }}. {{ a.type }}</span>
+              }
+              @if (w.actions.length === 0) {
+                <span class="empty-sm">Aucune action</span>
+              }
+            </div>
+            <div class="add-action">
+              <select [(ngModel)]="selectedActionType[w.id]">
+                @for (t of actionTypes; track t) { <option [value]="t">{{ t }}</option> }
+              </select>
+              <input type="number" [(ngModel)]="selectedActionOrder[w.id]" min="1" placeholder="Ordre" />
+              <button class="btn btn-blue" (click)="addAction(w)">+ Ajouter</button>
+            </div>
+
+            <div class="section-label">Exécutions</div>
+            @if (!executions[w.id] || executions[w.id].length === 0) {
+              <div class="empty-sm" style="padding:12px 0">Aucune exécution</div>
+            }
+            @for (e of executions[w.id]; track e.id) {
+              <details class="exec-item">
+                <summary class="exec-header">
+                  <span class="badge" [class.badge-success]="e.status === 'success'" [class.badge-error]="e.status !== 'success'">{{ e.status }}</span>
+                  <span class="exec-date">{{ e.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                </summary>
+                <div class="logs">
+                  @for (log of e.logs; track log) { <div>{{ log }}</div> }
+                </div>
+              </details>
+            }
+          </div>
+        }
+      </div>
+    }
+    <div class="toolbar" style="margin-top: 32px;">
+      <h2>Tâches</h2>
+      <button class="btn btn-blue" (click)="loadTasks()">↻ Rafraîchir</button>
+    </div>
+
+    @if (tasks.length === 0) {
+      <div class="empty">Aucune tâche trouvée</div>
+    }
+
+    @for (t of tasks; track t.id) {
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="wf-name">{{ t.type }}</div>
+            <div class="wf-sub">
+              <span class="exec-date">{{ t.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              <span class="badge badge-trigger">workflow: {{ t.workflowId }}</span>
+            </div>
+          </div>
+        </div>
+        @if (t.data) {
+          <div class="card-body">
+            <div class="section-label">Données</div>
+            <code style="font-size:0.8rem; color:#475569;">{{ t.data | json }}</code>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- MODAL CRÉER WORKFLOW -->
+@if (showCreateModal) {
+  <div class="overlay" (click)="showCreateModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Nouveau Workflow</h3>
+      <input type="text" [(ngModel)]="newName" placeholder="Nom du workflow" />
+      <select [(ngModel)]="newTrigger">
+        @for (t of triggers; track t) { <option [value]="t">{{ t }}</option> }
+      </select>
+      <div class="modal-footer">
+        <button class="btn btn-gray" (click)="showCreateModal = false">Annuler</button>
+        <button class="btn btn-green" (click)="createWorkflow()">Créer</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL CRÉER UTILISATEUR → déclenche user.registered -->
+@if (showUserModal) {
+  <div class="overlay" (click)="showUserModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Créer un utilisateur <span class="trigger-hint">→ déclenche user.registered</span></h3>
+      <input type="text" [(ngModel)]="userName" placeholder="Nom" />
+      <input type="email" [(ngModel)]="userEmail" placeholder="Email" />
+      <input type="password" [(ngModel)]="userPassword" placeholder="Mot de passe" />
+      <select [(ngModel)]="userRole">
+        <option value="merchant">merchant</option>
+        <option value="admin">admin</option>
+      </select>
+      <div class="modal-footer">
+        <button class="btn btn-gray" (click)="showUserModal = false">Annuler</button>
+        <button class="btn btn-orange" (click)="createUser()">Créer</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL CRÉER COMMANDE → déclenche order.created -->
+@if (showOrderModal) {
+  <div class="overlay" (click)="showOrderModal = false">
+    <div class="modal modal-large" (click)="$event.stopPropagation()">
+      <h3>Créer une commande <span class="trigger-hint">→ déclenche order.created</span></h3>
+      <input type="email" [(ngModel)]="orderEmail" placeholder="Email client" />
+      <div class="section-label" style="margin-top:8px">Articles</div>
+      @for (item of orderItems; track $index; let i = $index) {
+        <div class="item-row">
+          <input [(ngModel)]="item.productId" placeholder="Product ID" />
+          <input type="number" [(ngModel)]="item.quantity" placeholder="Qté" min="1" />
+          <input type="number" [(ngModel)]="item.price" placeholder="Prix" min="0" />
+          <button class="btn btn-red" (click)="removeItem(i)">✕</button>
+        </div>
+      }
+      <button class="btn btn-blue" style="margin-top:8px" (click)="addItem()">+ Article</button>
+      <div class="modal-footer">
+        <button class="btn btn-gray" (click)="showOrderModal = false">Annuler</button>
+        <button class="btn btn-teal" (click)="createOrder()">Créer commande</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (toast) {
+  <div class="toast">{{ toast }}</div>
+}

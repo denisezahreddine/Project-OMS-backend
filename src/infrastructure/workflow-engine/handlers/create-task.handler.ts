@@ -17,7 +17,7 @@ export class CreateTaskHandler implements ActionHandler {
     const task = await this.prisma.task.create({
       data: {
         merchantId: context.merchantId ?? '',
-        workflowId: (context.eventData as Record<string, string>)?.workflowId ?? '',
+        workflowId: context.workflowId ?? '',
         type: 'workflow_task',
         data: context.eventData ? (context.eventData as unknown as Prisma.InputJsonValue) : undefined,
       },
