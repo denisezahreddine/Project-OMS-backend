@@ -18,7 +18,6 @@ import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handle
 import { ScheduleModule } from '@nestjs/schedule';
 import { WorkflowCronService } from './cron/workflow-cron.service';
 import { ActionFactory } from './workflow-engine/action-factory.service';
-import { WorkflowListener } from '../presentation/workflow.listener';
 import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
 import { NotifyUserHandler } from './workflow-engine/handlers/notify-user.handler';
 import { JwtStrategy } from './auth/jwt.strategy';

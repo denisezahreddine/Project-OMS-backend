@@ -22,7 +22,7 @@ export class Dashboard implements OnInit {
   showCreateModal = false;
   newName = '';
   newTrigger = 'order.created';
-  triggers = ['order.created', 'user.registered', 'manual.trigger', 'updated.status'];
+  triggers = ['order.created', 'user.registered', 'manual.trigger', 'updated.status', 'order.notpaid'];
 
   // Actions
   actionTypes = ['notify_admin', 'notify_user', 'create_log', 'create_task'];
@@ -35,6 +35,12 @@ export class Dashboard implements OnInit {
   userName = '';
   userPassword = 'password123';
   userRole = 'merchant';
+
+  // Changer statut commande
+  showStatusModal = false;
+  statusOrderId = '';
+  statusValue = 'PAID';
+  orderStatuses = ['PAID', 'PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED'];
 
   // Créer commande
   showOrderModal = false;
@@ -53,23 +59,30 @@ export class Dashboard implements OnInit {
   ngOnInit() { this.load(); this.loadTasks(); }
 
   load() {
-    this.workflowService.getAll().subscribe(data => {
-      this.workflows = data;
-      data.forEach(w => {
-        this.selectedActionType[w.id] = this.selectedActionType[w.id] || 'notify_admin';
-        this.selectedActionOrder[w.id] = this.selectedActionOrder[w.id] || w.actions.length + 1;
-        this.loadExecutions(w.id);
-      });
+    this.workflowService.getAll().subscribe({
+      next: data => {
+        this.workflows = data;
+        data.forEach(w => {
+          this.selectedActionType[w.id] = this.selectedActionType[w.id] || 'notify_admin';
+          this.selectedActionOrder[w.id] = this.selectedActionOrder[w.id] || w.actions.length + 1;
+          this.loadExecutions(w.id);
+        });
+      },
+      error: () => this.showToast('Erreur chargement workflows'),
     });
   }
 
   loadTasks() {
-    this.workflowService.getTasks().subscribe(data => { this.tasks = data; });
+    this.workflowService.getTasks().subscribe({
+      next: data => { this.tasks = data; },
+      error: () => {},
+    });
   }
 
   loadExecutions(id: string) {
-    this.workflowService.getExecutions(id).subscribe(data => {
-      this.executions[id] = data;
+    this.workflowService.getExecutions(id).subscribe({
+      next: data => { this.executions[id] = data; },
+      error: () => {},
     });
   }
 
@@ -90,7 +103,8 @@ export class Dashboard implements OnInit {
 
   toggle(w: any) {
     this.workflowService.toggle(w.id).subscribe(res => {
-      w.isActive = res.isActive;
+      const idx = this.workflows.findIndex(x => x.id === w.id);
+      if (idx !== -1) this.workflows[idx] = { ...this.workflows[idx], isActive: res.isActive };
       this.showToast(`Workflow ${res.isActive ? 'activé' : 'désactivé'}`);
     });
   }
@@ -113,14 +127,17 @@ export class Dashboard implements OnInit {
 
   // Créer user → déclenche user.registered
   createUser() {
-    if (!this.userEmail || !this.userName) return;
+    if (!this.userEmail || !this.userName) { this.showToast('Email et nom requis'); return; }
     this.orderService.registerUser(this.userEmail, this.userName, this.userPassword, this.userRole).subscribe({
       next: () => {
         this.showUserModal = false;
         this.showToast('Utilisateur créé → user.registered déclenché !');
         setTimeout(() => { this.load(); this.loadTasks(); }, 1000);
       },
-      error: (err) => this.showToast(err.error?.message || 'Erreur création user'),
+      error: (err) => {
+        const msg = err.error?.message || err.message || 'Erreur création user';
+        this.showToast(msg);
+      },
     });
   }
 
@@ -134,6 +151,18 @@ export class Dashboard implements OnInit {
         setTimeout(() => { this.load(); this.loadTasks(); }, 1000);
       },
       error: (err) => this.showToast(err.error?.message || 'Erreur création commande'),
+    });
+  }
+
+  changeOrderStatus() {
+    if (!this.statusOrderId) { this.showToast('Order ID requis'); return; }
+    this.orderService.changeStatus(this.statusOrderId, this.statusValue).subscribe({
+      next: (res) => {
+        this.showStatusModal = false;
+        this.showToast(`Commande ${res.orderId} → ${res.status}`);
+        setTimeout(() => this.load(), 1000);
+      },
+      error: (err) => this.showToast(err.error?.message || 'Erreur changement statut'),
     });
   }
 
