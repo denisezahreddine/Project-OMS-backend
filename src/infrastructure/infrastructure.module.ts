@@ -13,6 +13,8 @@ import { WorkflowRepository } from '../domain/ports/workflow.repository';
 import { PrismaWorkflowRepository } from './adapters/workflow.repository';
 import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
 import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
+import { ScheduleModule } from '@nestjs/schedule';
+import { WorkflowCronService } from './cron/workflow-cron.service';
 import { ActionFactory } from './workflow-engine/action-factory.service';
 import { WorkflowListener } from '../presentation/workflow.listener';
 import { CreateLogHandler } from './workflow-engine/handlers/create-log.handler';
@@ -22,6 +24,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
 @Module({
   imports: [
     PassportModule,
+    ScheduleModule.forRoot(), //this is pour our cron
     JwtModule.register({
       secret: process.env.JWT_SECRET ?? 'super-secret-key-change-in-production',
       signOptions: { expiresIn: '24h' },
@@ -54,6 +57,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
     // Factory
     ActionFactory,
     JwtStrategy,
+    WorkflowCronService,
   ],
   exports: [
     JwtModule,
@@ -65,6 +69,8 @@ import { JwtStrategy } from './auth/jwt.strategy';
     NotifyUserHandler,
     CreateLogHandler,
     CreateTaskHandler,
-    ActionFactory,],
+    ActionFactory,
+    WorkflowEngineUsecase,
+  ],
 })
 export class InfrastructureModule {}
