@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   WorkflowRepository,
   WorkflowData,
+  WorkflowCondition,
 } from '../../domain/ports/workflow.repository';
 import { WorkflowEntity } from '../../domain/models/workflow.entity';
 
@@ -14,6 +15,7 @@ export class CreateWorkflowUseCase {
     name: string,
     trigger: string,
     merchantId: string,
+    condition?: WorkflowCondition,
   ): Promise<WorkflowData> {
     const workflow = WorkflowEntity.create(
       randomUUID(),
@@ -27,6 +29,7 @@ export class CreateWorkflowUseCase {
       name: workflow.name,
       trigger: workflow.trigger,
       merchantId: workflow.merchantId,
+      condition,
     });
   }
 }
