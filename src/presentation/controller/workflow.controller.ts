@@ -23,12 +23,9 @@ export class WorkflowController {
 
   // POST /workflows
   @Post()
-  async create(@Body() dto: CreateWorkflowDto) {
-    // TODO: récupérer merchantId depuis le token auth
-    const merchantId = '69c3e2e095ecf7392c41d2a3';
-    return this.createWorkflow.execute(dto.name, dto.trigger, merchantId);
+  async create(@Body() dto: WorkflowDto, @Request() req) {
+    return this.createWorkflow.execute(dto.name, dto.trigger, req.user.id);
   }
-
   // POST /workflows/:id/actions
   @Post(':id/actions')
   async addActionToWorkflow(@Param('id') id: string, @Body() dto: AddActionDto) {
