@@ -36,7 +36,9 @@ export class WorkflowEngineUsecase {
     this.logger.log(`${workflows.length} workflow(s) a executer`);
 
     for (const workflow of workflows) {
-      await this.executeWorkflow(workflow, { merchantId, eventData });
+      if(workflow.isActive) {
+        await this.executeWorkflow(workflow, {merchantId, eventData});
+      }
     }
   }
 
