@@ -75,3 +75,12 @@ model WorkflowExecution {
   logs       String[]
   createdAt  DateTime @default(now())
 }
+
+model Task {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  merchantId String   @db.ObjectId
+  workflowId String   @db.ObjectId
+  type       String   @default("workflow_task")
+  data       Json?
+  createdAt  DateTime @default(now())
+}

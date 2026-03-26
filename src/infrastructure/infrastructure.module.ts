@@ -11,6 +11,8 @@ import { PrismaService } from './database/prisma.service';
 import { WorkflowEngineUsecase } from '../domain/usecases/workflow-engine.usecase';
 import { WorkflowRepository } from '../domain/ports/workflow.repository';
 import { PrismaWorkflowRepository } from './adapters/workflow.repository';
+import { TaskRepository } from '../domain/ports/task.repository';
+import { PrismaTaskRepository } from './adapters/task.repository';
 import { NotifyAdminHandler } from './workflow-engine/handlers/notify-admin.handler';
 import { CreateTaskHandler } from './workflow-engine/handlers/create-task.handler';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -48,6 +50,10 @@ import { JwtStrategy } from './auth/jwt.strategy';
       provide: WorkflowRepository,
       useClass: PrismaWorkflowRepository,
     },
+    {
+      provide: TaskRepository,
+      useClass: PrismaTaskRepository,
+    },
     // Workflow engine (port → implémentation)
     WorkflowEngineUsecase,
     NotifyAdminHandler,
@@ -65,6 +71,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
     IOrderRepository,
     EmailNotifier,
     WorkflowRepository,
+    TaskRepository,
     NotifyAdminHandler,
     NotifyUserHandler,
     CreateLogHandler,

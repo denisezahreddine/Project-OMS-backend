@@ -10,6 +10,7 @@ import { ListMerchantWorkflowsUseCase } from './usecases/list-merchant-workflows
 import {WorkflowEngineUsecase} from "./usecases/workflow-engine.usecase";
 import { ToggleWorkflowUseCase } from './usecases/toggle-workflow.usecase';
 import { ChangeOrderStatusUseCase } from './usecases/change-order-status.usecase';
+import { GetTasksUseCase } from './usecases/get-tasks.usecase';
 @Module({
   imports: [InfrastructureModule],
   providers: [
@@ -23,6 +24,7 @@ import { ChangeOrderStatusUseCase } from './usecases/change-order-status.usecase
     FindWorkflowExecutionsUseCase,
     ListMerchantWorkflowsUseCase,
     ToggleWorkflowUseCase,
+    GetTasksUseCase,
   ],
   exports: [
     RegisterUseCase,
@@ -35,6 +37,7 @@ import { ChangeOrderStatusUseCase } from './usecases/change-order-status.usecase
     FindWorkflowExecutionsUseCase,
     ListMerchantWorkflowsUseCase,
     ToggleWorkflowUseCase,
+    GetTasksUseCase,
   ],
 })
 export class DomainModule {}

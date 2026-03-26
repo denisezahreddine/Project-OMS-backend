@@ -7,20 +7,19 @@ import { CreateTaskHandler } from './handlers/create-task.handler';
 
 @Injectable()
 export class ActionFactory {
+  constructor(
+    private readonly notifyAdmin: NotifyAdminHandler,
+    private readonly notifyUser: NotifyUserHandler,
+    private readonly createLog: CreateLogHandler,
+    private readonly createTask: CreateTaskHandler,
+  ) {}
+
   getHandler(actionType: string): ActionHandler {
     switch (actionType) {
-      case 'notify_admin':
-        return new NotifyAdminHandler();
-
-      case 'notify_user':
-        return new NotifyUserHandler();
-
-      case 'create_log':
-        return new CreateLogHandler();
-
-      case 'create_task':
-        return new CreateTaskHandler();
-
+      case 'notify_admin':  return this.notifyAdmin;
+      case 'notify_user':   return this.notifyUser;
+      case 'create_log':    return this.createLog;
+      case 'create_task':   return this.createTask;
       default:
         throw new Error(`Action inconnue: ${actionType}`);
     }
