@@ -4,6 +4,7 @@ import {
   Body,
   UseGuards,
   InternalServerErrorException,
+  Request,
   Param,
 } from '@nestjs/common';
 import { CreateOrderUseCase } from '../../domain/usecases/order.usecases';
@@ -21,8 +22,9 @@ export class OrderController {
 
   // POST /orders
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto) {
+  async create(@Body() createOrderDto: CreateOrderDto, @Request() req: { user: { merchantId: string } }) {
     try {
+      createOrderDto.merchantId = req.user.merchantId;
       const result = await this.createOrderUseCase.execute(createOrderDto);
 
       return {

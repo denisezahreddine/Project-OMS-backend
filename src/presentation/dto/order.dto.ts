@@ -3,6 +3,7 @@ import {
   IsArray,
   IsString,
   IsNotEmpty,
+  IsOptional,
   ValidateNested,
   IsNumber,
   Min,
@@ -30,9 +31,9 @@ class OrderItemDto {
 }
 
 export class CreateOrderDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   merchantId: string;
 
   @ApiProperty()

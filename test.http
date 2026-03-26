@@ -149,7 +149,6 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "merchantId": "{{merchantId}}",
   "customerEmail": "customer@test.com",
   "items": [
     {
@@ -175,6 +174,12 @@ Authorization: Bearer {{token}}
 
 ### 14. Lister tous mes workflows
 GET {{baseUrl}}/workflows
+Authorization: Bearer {{token}}
+
+###
+
+### 15. Activer / Désactiver un workflow (toggle)
+PATCH {{baseUrl}}/workflows/{{workflowId}}/toggle
 Authorization: Bearer {{token}}
 ###
 

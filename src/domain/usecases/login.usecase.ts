@@ -31,6 +31,7 @@ export class LoginUseCase {
       sub: merchant.id,
       email: merchant.email,
       role: merchant.role,
+      merchantId: merchant.id,
     };
     const accessToken = this.jwtService.sign(payload);
 

@@ -51,4 +51,5 @@ export abstract class WorkflowRepository {
     logs: string[];
   }): Promise<WorkflowExecutionData>;
   abstract findExecutions(workflowId: string): Promise<WorkflowExecutionData[]>;
+  abstract updateIsActive(id: string, isActive: boolean): Promise<WorkflowData>;
 }

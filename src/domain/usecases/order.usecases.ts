@@ -36,11 +36,11 @@ export class CreateOrderUseCase {
       merchant?.email || '',
       order.id ?? '',
     );
-    return order;
     //Emettre notre evenement de creation de order
     this.eventEmitter.emit('order.created', {
       merchantId: data.merchantId,
       orderId: order.id,
     });
+    return order;
   }
 }
