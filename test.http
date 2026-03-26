@@ -205,26 +205,6 @@ Authorization: Bearer {{token}}
 ### 15. Activer / Désactiver un workflow (toggle)
 PATCH {{baseUrl}}/workflows/{{workflowId}}/toggle
 Authorization: Bearer {{token}}
-###
-
-### 15. changement de status (order status)
-POST {{baseUrl}}/orders/{{orderId}}/status
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "status": "SHIPPED"
-}
-###
-
-### 16. changement de status (order status) PAID
-POST {{baseUrl}}/orders/{{orderId}}/status
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "status": "PAID"
-}
 
 ###
 
@@ -264,7 +244,7 @@ Authorization: Bearer {{token}}
 
 ###
 
-### 12. Créer une commande → déclenche order.created
+### 20. Créer une commande → déclenche order.created
 POST {{baseUrl}}/orders
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -284,6 +264,84 @@ Authorization: Bearer {{token}}
       "price": 19.99
     }
   ]
+}
+
+###
+
+### 15. changement de status (order status)
+POST {{baseUrl}}/orders/{{orderId}}/status
+###########################################################
+### ETAPE 6 — TESTER MANUAL TRIGGER
+###########################################################
+
+### 20. Créer un workflow manual.trigger
+POST {{baseUrl}}/workflows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "SHIPPED"
+}
+###
+
+### 16. changement de status (order status) PAID
+POST {{baseUrl}}/orders/{{orderId}}/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "PAID"
+}
+
+###
+
+### 17. Créer un workflow trigger updated.status
+POST {{baseUrl}}/workflows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "reaction changement de status",
+  "trigger": "order.notpaid"
+}
+
+###
+
+### 18. Ajouter action notify_user
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "notify_user",
+  "order": 1
+}
+
+###
+
+### 19. Ajouter action create_log
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_log",
+  "order": 2
+}
+  "name": "Workflow manuel",
+  "trigger": "manual.trigger"
+}
+
+###
+
+### 21. Ajouter action create_task → copier workflowId dans @workflowId
+POST {{baseUrl}}/workflows/{{workflowId}}/actions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "create_task",
+  "order": 1
 }
 
 ###########################################################

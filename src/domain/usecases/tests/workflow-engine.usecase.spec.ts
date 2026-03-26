@@ -1,7 +1,7 @@
-import { WorkflowEngineUsecase } from './workflow-engine.usecase';
-import { WorkflowRepository, WorkflowData } from '../ports/workflow.repository';
-import { ActionFactory } from '../../infrastructure/workflow-engine/action-factory.service';
-import { ActionHandler, ActionContext } from '../ports/action-handler.port';
+import { WorkflowEngineUsecase } from '../workflow-engine.usecase';
+import { WorkflowRepository, WorkflowData } from '../../ports/workflow.repository';
+import { ActionFactory } from '../../../infrastructure/workflow-engine/action-factory.service';
+import { ActionHandler, ActionContext } from '../../ports/action-handler.port';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,10 @@ const mockWorkflowRepo = {
 } as unknown as WorkflowRepository;
 
 const mockHandler: ActionHandler = {
-  execute: jest.fn().mockResolvedValue(undefined),
+  execute: jest.fn().mockResolvedValue({
+    success: true,
+    message: 'Action executee avec succes',
+  }),
 };
 
 const mockActionFactory = {
@@ -55,7 +58,6 @@ describe('WorkflowEngineUsecase', () => {
     await engine.dispatch('user.registered', 'merchant-123', {
       email: 'test@test.com',
     });
-
     // Le factory doit être appelé pour chaque action
     expect(mockActionFactory.getHandler).toHaveBeenCalledWith('notify_admin');
     expect(mockActionFactory.getHandler).toHaveBeenCalledWith('create_log');
