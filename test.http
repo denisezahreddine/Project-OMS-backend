@@ -1,9 +1,9 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM0NDRjZTM2ODc0Y2E1ODQ3NWUzMzkiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ0NzQ0NDksImV4cCI6MTc3NDU2MDg0OX0.gktXjBzgt5pTQ_8knuruT9pJG_MrCA01k4f51bBwbME
-@merchantId = 69c444ce36874ca58475e339
-@workflowId = 69c45517288e0a1b71a69ad2
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM1MGNmYjFmMjFjOTkwZmIwYjg3Y2MiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ1MjE2MDksImV4cCI6MTc3NDYwODAwOX0.GEoxzKk2KDUS89QG9J52-coIiNS_aByR21fnHqy1Uok
+@merchantId = 69c50cfb1f21c990fb0b87cc
+@workflowId = 69c50d381f21c990fb0b87cd
+@orderId = 69c50e3a1f21c990fb0b87d1
 
 ###########################################################
 ### ETAPE 1 — AUTH
@@ -78,10 +78,10 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "merchant@oms.com",
-  "name": "John Doe",
+  "email": "merchant@oms22.com",
+  "name": "John Doe22",
   "password": "password123",
-  "role": "merchant"
+  "role": "merchant22"
 }
 
 ###########################################################
@@ -176,3 +176,24 @@ Authorization: Bearer {{token}}
 ### 14. Lister tous mes workflows
 GET {{baseUrl}}/workflows
 Authorization: Bearer {{token}}
+###
+
+### 15. changement de status (order status)
+POST {{baseUrl}}/orders/{{orderId}}/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "SHIPPED"
+}
+###
+
+### 16. changement de status (order status) PAID
+POST {{baseUrl}}/orders/{{orderId}}/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "PAID"
+}
+

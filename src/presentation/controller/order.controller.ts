@@ -4,15 +4,20 @@ import {
   Body,
   UseGuards,
   InternalServerErrorException,
+  Param,
 } from '@nestjs/common';
 import { CreateOrderUseCase } from '../../domain/usecases/order.usecases';
-import { CreateOrderDto } from '../dto/order.dto';
+import { ChangeOrderStatusUseCase } from '../../domain/usecases/change-order-status.usecase';
+import { ChangeOrderStatusDto, CreateOrderDto } from '../dto/order.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/orders')
 export class OrderController {
-  constructor(private readonly createOrderUseCase: CreateOrderUseCase) {}
+  constructor(
+    private readonly createOrderUseCase: CreateOrderUseCase,
+    private readonly changeOrderStatusUseCase: ChangeOrderStatusUseCase,
+  ) {}
 
   // POST /orders
   @Post()
@@ -28,5 +33,18 @@ export class OrderController {
     } catch (error) {
       throw new InternalServerErrorException((error as Error).message);
     }
+  }
+
+  @Post(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: ChangeOrderStatusDto,
+  ) {
+    const result = await this.changeOrderStatusUseCase.execute(id, dto.status);
+    return {
+      message: 'Order status updated successfully',
+      orderId: result.id,
+      status: result.status,
+    };
   }
 }
