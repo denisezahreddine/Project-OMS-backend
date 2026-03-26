@@ -68,6 +68,15 @@ export class OrderRepositoryImpl implements IOrderRepository {
     return this.toOrderEntity(prismaOrder);
   }
 
+  async findByStatus(status: OrderStatus): Promise<OrderEntity[]> {
+    const prismaOrders = await this.prisma.order.findMany({
+      where: { status },
+      include: { items: true },
+    });
+
+    return prismaOrders.map((order) => this.toOrderEntity(order));
+  }
+
   async updateStatus(orderId: string, nextStatus: OrderStatus): Promise<OrderEntity> {
     const prismaOrder = await this.prisma.order.update({
       where: { id: orderId },

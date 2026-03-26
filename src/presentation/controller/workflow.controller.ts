@@ -62,6 +62,34 @@ export class WorkflowController {
     };
   }
 
+  // POST /workflows/templates/order-notpaid
+  @Post('templates/order-notpaid')
+  async createOrderNotPaidTemplate(@Request() req) {
+    const workflow = await this.createWorkflow.execute(
+      'Order not paid',
+      'order.notpaid',
+      req.user.id,
+    );
+
+    const notifyAction = await this.addAction.execute(
+      workflow.id,
+      'notify_user',
+      1,
+      { channel: 'email' },
+    );
+    const logAction = await this.addAction.execute(
+      workflow.id,
+      'create_log',
+      2,
+    );
+
+    return {
+      message: 'Workflow order.notpaid created with notify_user and create_log',
+      workflow,
+      actions: [notifyAction, logAction],
+    };
+  }
+
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
   async triggerManually(@Request() req) {
