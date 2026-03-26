@@ -137,7 +137,7 @@
 
 <!-- MODAL CRÉER UTILISATEUR → déclenche user.registered -->
 @if (showUserModal) {
-  <div class="overlay" (click)="showUserModal = false">
+  <div class="overlay" (click)="showUserModal = false; loading = false">
     <div class="modal" (click)="$event.stopPropagation()">
       <h3>Créer un utilisateur <span class="trigger-hint">→ déclenche user.registered</span></h3>
       <input type="text" [(ngModel)]="userName" placeholder="Nom" />
@@ -148,8 +148,8 @@
         <option value="admin">admin</option>
       </select>
       <div class="modal-footer">
-        <button class="btn btn-gray" (click)="showUserModal = false">Annuler</button>
-        <button class="btn btn-orange" (click)="createUser()">Créer</button>
+        <button class="btn btn-gray" (click)="showUserModal = false; loading = false">Annuler</button>
+        <button class="btn btn-orange" (click)="createUser()" [disabled]="loading">{{ loading ? '...' : 'Créer' }}</button>
       </div>
     </div>
   </div>
@@ -157,7 +157,7 @@
 
 <!-- MODAL CRÉER COMMANDE → déclenche order.created -->
 @if (showOrderModal) {
-  <div class="overlay" (click)="showOrderModal = false">
+  <div class="overlay" (click)="showOrderModal = false; loading = false">
     <div class="modal modal-large" (click)="$event.stopPropagation()">
       <h3>Créer une commande <span class="trigger-hint">→ déclenche order.created</span></h3>
       <input type="email" [(ngModel)]="orderEmail" placeholder="Email client" />
@@ -172,8 +172,8 @@
       }
       <button class="btn btn-blue" style="margin-top:8px" (click)="addItem()">+ Article</button>
       <div class="modal-footer">
-        <button class="btn btn-gray" (click)="showOrderModal = false">Annuler</button>
-        <button class="btn btn-teal" (click)="createOrder()">Créer commande</button>
+        <button class="btn btn-gray" (click)="showOrderModal = false; loading = false">Annuler</button>
+        <button class="btn btn-teal" (click)="createOrder()" [disabled]="loading">{{ loading ? '...' : 'Créer commande' }}</button>
       </div>
     </div>
   </div>

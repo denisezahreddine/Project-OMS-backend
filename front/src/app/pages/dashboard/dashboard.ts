@@ -41,6 +41,7 @@ export class Dashboard implements OnInit {
   orderEmail = 'customer@test.com';
   orderItems = [{ productId: 'prod-001', quantity: 2, price: 49.99 }];
 
+  loading = false;
   toast = '';
 
   constructor(
@@ -113,27 +114,31 @@ export class Dashboard implements OnInit {
 
   // Créer user → déclenche user.registered
   createUser() {
-    if (!this.userEmail || !this.userName) return;
+    if (!this.userEmail || !this.userName || this.loading) return;
+    this.loading = true;
     this.orderService.registerUser(this.userEmail, this.userName, this.userPassword, this.userRole).subscribe({
       next: () => {
+        this.loading = false;
         this.showUserModal = false;
         this.showToast('Utilisateur créé → user.registered déclenché !');
         setTimeout(() => { this.load(); this.loadTasks(); }, 1000);
       },
-      error: (err) => this.showToast(err.error?.message || 'Erreur création user'),
+      error: (err) => { this.loading = false; this.showToast(err.error?.message || 'Erreur création user'); },
     });
   }
 
   // Créer commande → déclenche order.created
   createOrder() {
-    if (!this.orderEmail) return;
+    if (!this.orderEmail || this.loading) return;
+    this.loading = true;
     this.orderService.createOrder(this.orderEmail, this.orderItems).subscribe({
       next: () => {
+        this.loading = false;
         this.showOrderModal = false;
         this.showToast('Commande créée → order.created déclenché !');
         setTimeout(() => { this.load(); this.loadTasks(); }, 1000);
       },
-      error: (err) => this.showToast(err.error?.message || 'Erreur création commande'),
+      error: (err) => { this.loading = false; this.showToast(err.error?.message || 'Erreur création commande'); },
     });
   }
 
