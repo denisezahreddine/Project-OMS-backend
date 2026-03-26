@@ -8,11 +8,13 @@ import {
   OrderItem,
   OrderStatus,
 } from '../../domain/models/order.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
     private readonly orderRepository: IOrderRepository, // Un autre Port
     private readonly emailNotifier: EmailNotifier, // Le Port défini plus haut
+    private readonly eventEmitter: EventEmitter2, //That's pour emettre our event go
   ) {}
 
   async execute(data: CreateOrderDto) {
@@ -35,5 +37,10 @@ export class CreateOrderUseCase {
       order.id ?? '',
     );
     return order;
+    //Emettre notre evenement de creation de order
+    this.eventEmitter.emit('order.created', {
+      merchantId: data.merchantId,
+      orderId: order.id,
+    });
   }
 }
