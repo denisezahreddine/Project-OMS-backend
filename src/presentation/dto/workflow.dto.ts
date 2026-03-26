@@ -7,7 +7,7 @@ export class WorkflowDto {
   name: string;
 
   @IsString()
-  @IsIn(['user.registered', 'order.created', 'manual.trigger'])
+  @IsIn(['user.registered', 'order.created', 'updated.status', 'manual.trigger'])
   @ApiProperty()
   trigger: string;
 }

@@ -32,6 +32,34 @@ export class WorkflowController {
     return this.addAction.execute(id, dto.type, dto.order, dto.config);
   }
 
+  // POST /workflows/templates/updated-status
+  @Post('templates/updated-status')
+  async createUpdatedStatusTemplate(@Request() req) {
+    const workflow = await this.createWorkflow.execute(
+      'Order status updated',
+      'updated.status',
+      req.user.id,
+    );
+
+    const notifyAction = await this.addAction.execute(
+      workflow.id,
+      'notify_user',
+      1,
+      { channel: 'email' },
+    );
+    const logAction = await this.addAction.execute(
+      workflow.id,
+      'create_log',
+      2,
+    );
+
+    return {
+      message: 'Workflow updated.status created with notify_user and create_log',
+      workflow,
+      actions: [notifyAction, logAction],
+    };
+  }
+
   // POST /workflows/:id/trigger
   @Post(':id/trigger')
   async triggerManually(@Request() req) {

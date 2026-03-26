@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { IOrderRepository } from '../ports/order.repository';
 import { OrderEntity, OrderStatus } from '../models/order.entity';
 import { CustomErrorException } from '../exceptions/custom.error.exceptions';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ChangeOrderStatusUseCase {
-  constructor(private readonly orderRepository: IOrderRepository) {}
+  constructor(
+    private readonly orderRepository: IOrderRepository,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async execute(orderId: string, nextStatus: OrderStatus): Promise<OrderEntity> {
     const order = await this.orderRepository.findById(orderId);
@@ -24,7 +28,16 @@ export class ChangeOrderStatusUseCase {
       );
     }
 
-    return this.orderRepository.updateStatus(orderId, nextStatus);
+    const updatedOrder = await this.orderRepository.updateStatus(orderId, nextStatus);
+
+    this.eventEmitter.emit('updated.status', {
+      orderId: updatedOrder.id,
+      merchantId: updatedOrder.merchantId,
+      previousStatus: order.status,
+      newStatus: updatedOrder.status,
+    });
+
+    return updatedOrder;
   }
 
   private isValidTransition(

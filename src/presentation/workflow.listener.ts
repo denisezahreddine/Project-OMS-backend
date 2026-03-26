@@ -21,6 +21,17 @@ export class WorkflowListener {
     await this.engine.dispatch('order.created', data.merchantId, data);
   }
 
+  @OnEvent('updated.status')
+  async handleOrderStatusUpdated(data: {
+    merchantId: string;
+    orderId: string;
+    previousStatus: string;
+    newStatus: string;
+  }) {
+    this.logger.log(`Event recu: updated.status`);
+    await this.engine.dispatch('updated.status', data.merchantId, data);
+  }
+
   @OnEvent('manual.trigger')
   async handleManualTrigger(data: { merchantId: string }) {
     this.logger.log(`Event recu: manual.trigger`);
