@@ -107,4 +107,12 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
       orderBy: { createdAt: 'desc' },
     }) as Promise<WorkflowExecutionData[]>;
   }
+
+  async updateIsActive(id: string, isActive: boolean): Promise<WorkflowData> {
+    return this.prisma.workflow.update({
+      where: { id },
+      data: { isActive },
+      include: { actions: { orderBy: { order: 'asc' } } },
+    }) as Promise<WorkflowData>;
+  }
 }

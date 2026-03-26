@@ -1,8 +1,8 @@
 ### Variables
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM0NDRjZTM2ODc0Y2E1ODQ3NWUzMzkiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzQ0NzQ0NDksImV4cCI6MTc3NDU2MDg0OX0.gktXjBzgt5pTQ_8knuruT9pJG_MrCA01k4f51bBwbME
-@merchantId = 69c444ce36874ca58475e339
-@workflowId = 69c45517288e0a1b71a69ad2
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OWM0ZjM5MmMxYjk3NjNhMzQyZTAzNjAiLCJlbWFpbCI6ImFkbWluQG9tcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJtZXJjaGFudElkIjoiNjljNGYzOTJjMWI5NzYzYTM0MmUwMzYwIiwiaWF0IjoxNzc0NTMxODcwLCJleHAiOjE3NzQ2MTgyNzB9.0mjrQQOyorRfXV8DyDVeeqeeLD0jWgfjW_Sy1VdDsnc
+@merchantId =69c511f9887bc937e7ab2d82
+@workflowId = 69c513c8887bc937e7ab2d8a
 
 
 ###########################################################
@@ -78,8 +78,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "merchant@oms.com",
-  "name": "John Doe",
+  "email": "test@oms.com",
+  "name": "test Doe",
   "password": "password123",
   "role": "merchant"
 }
@@ -149,7 +149,6 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "merchantId": "{{merchantId}}",
   "customerEmail": "customer@test.com",
   "items": [
     {
@@ -175,4 +174,10 @@ Authorization: Bearer {{token}}
 
 ### 14. Lister tous mes workflows
 GET {{baseUrl}}/workflows
+Authorization: Bearer {{token}}
+
+###
+
+### 15. Activer / Désactiver un workflow (toggle)
+PATCH {{baseUrl}}/workflows/{{workflowId}}/toggle
 Authorization: Bearer {{token}}

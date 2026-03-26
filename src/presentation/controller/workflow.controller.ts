@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { CreateWorkflowUseCase } from '../../domain/usecases/create-workflow.usecase';
 import { AddActionToWorkflowUseCase } from '../../domain/usecases/add-action-to-workflow.usecase';
 import { FindWorkflowExecutionsUseCase } from '../../domain/usecases/find-workflow-executions.usecase';
@@ -6,6 +6,7 @@ import { ListMerchantWorkflowsUseCase } from '../../domain/usecases/list-merchan
 import { WorkflowDto } from '../dto/workflow.dto';
 import { AddActionDto } from '../dto/add-action.dto';
 import {WorkflowEngineUsecase} from "../../domain/usecases/workflow-engine.usecase";
+import { ToggleWorkflowUseCase } from '../../domain/usecases/toggle-workflow.usecase';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import {ApiBearerAuth} from "@nestjs/swagger";
 
@@ -19,6 +20,7 @@ export class WorkflowController {
     private triggerManual: WorkflowEngineUsecase,
     private findExecutions: FindWorkflowExecutionsUseCase,
     private listWorkflows: ListMerchantWorkflowsUseCase,
+    private toggleWorkflow: ToggleWorkflowUseCase,
   ) {}
 
   // POST /workflows
@@ -43,6 +45,12 @@ export class WorkflowController {
   @Get(':id/executions')
   async getExecutions(@Param('id') id: string) {
     return this.findExecutions.execute(id);
+  }
+
+  // PATCH /workflows/:id/toggle
+  @Patch(':id/toggle')
+  async toggle(@Param('id') id: string, @Request() req) {
+    return this.toggleWorkflow.execute(id, req.user.id);
   }
 
   // GET /workflows
