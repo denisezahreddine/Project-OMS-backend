@@ -40,6 +40,8 @@ export class CreateOrderUseCase {
     this.eventEmitter.emit('order.created', {
       merchantId: data.merchantId,
       orderId: order.id,
+      total: order.totalAmount,
+      status: order.status,
     });
     return order;
   }

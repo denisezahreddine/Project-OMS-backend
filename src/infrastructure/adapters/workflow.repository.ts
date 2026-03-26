@@ -6,6 +6,7 @@ import {
   WorkflowData,
   WorkflowActionData,
   WorkflowExecutionData,
+  WorkflowCondition,
 } from '../../domain/ports/workflow.repository';
 
 @Injectable()
@@ -45,15 +46,17 @@ export class PrismaWorkflowRepository extends WorkflowRepository {
     name: string;
     trigger: string;
     merchantId: string;
+    condition?: WorkflowCondition;
   }): Promise<WorkflowData> {
     return this.prisma.workflow.create({
       data: {
         name: data.name,
         trigger: data.trigger,
         merchantId: data.merchantId,
+        condition: data.condition ? (data.condition as unknown as Prisma.InputJsonValue) : undefined,
       },
       include: { actions: true },
-    }) as Promise<WorkflowData>;
+    }) as unknown as Promise<WorkflowData>;
   }
 
   async addAction(

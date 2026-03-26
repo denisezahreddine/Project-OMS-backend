@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   WorkflowRepository,
   WorkflowData,
+  WorkflowCondition,
 } from '../ports/workflow.repository';
 import { ActionFactory } from '../../infrastructure/workflow-engine/action-factory.service';
 import { ActionContext } from '../ports/action-handler.port';
@@ -36,9 +37,29 @@ export class WorkflowEngineUsecase {
     this.logger.log(`${workflows.length} workflow(s) a executer`);
 
     for (const workflow of workflows) {
-      if(workflow.isActive) {
+      if (workflow.isActive) {
+        if (workflow.condition && !this.evaluateCondition(workflow.condition, eventData)) {
+          this.logger.log(`Workflow ${workflow.name} ignore: condition non satisfaite`);
+          continue;
+        }
         await this.executeWorkflow(workflow, {merchantId, eventData});
       }
+    }
+  }
+
+  private evaluateCondition(condition: WorkflowCondition, eventData: unknown): boolean {
+    const data = eventData as Record<string, unknown>;
+    const actual = data?.[condition.field];
+    const expected = condition.value;
+
+    switch (condition.operator) {
+      case '>':   return (actual as number) > (expected as number);
+      case '<':   return (actual as number) < (expected as number);
+      case '>=':  return (actual as number) >= (expected as number);
+      case '<=':  return (actual as number) <= (expected as number);
+      case '===': return actual === expected;
+      case '!==': return actual !== expected;
+      default:    return false;
     }
   }
 

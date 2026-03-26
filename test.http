@@ -107,14 +107,37 @@ Content-Type: application/json
 
 ###
 
-### 9. Créer un workflow trigger order.created
+### 9. Créer un workflow trigger order.created (condition: total > 100)
 POST {{baseUrl}}/workflows
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "name": "Réaction création commande",
-  "trigger": "order.created"
+  "trigger": "order.created",
+  "condition": {
+    "field": "total",
+    "operator": "<",
+    "value": 100
+  }
+}
+
+###
+
+### 9b. Créer une commande qui passe  la condition (total = 19.99)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "customerEmail": "customer@test.com",
+  "items": [
+    {
+      "productId": "prod-cheap",
+      "quantity": 1,
+      "price": 19.99
+    }
+  ]
 }
 
 ###
@@ -144,6 +167,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### 12. Créer une commande → déclenche order.created
+### Créer une commande qui NE passe PAS la condition (total = 119.97)
 POST {{baseUrl}}/orders
 Content-Type: application/json
 Authorization: Bearer {{token}}

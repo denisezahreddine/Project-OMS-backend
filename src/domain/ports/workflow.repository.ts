@@ -5,11 +5,18 @@ export interface WorkflowActionData {
   config?: Record<string, unknown> | null;
 }
 
+export interface WorkflowCondition {
+  field: string;
+  operator: '>' | '<' | '>=' | '<=' | '===' | '!==';
+  value: number | string | boolean;
+}
+
 export interface WorkflowData {
   id: string;
   name: string;
   trigger: string;
   isActive: boolean;
+  condition?: WorkflowCondition | null;
   merchantId: string;
   actions: WorkflowActionData[];
 }
@@ -33,6 +40,7 @@ export abstract class WorkflowRepository {
     name: string;
     trigger: string;
     merchantId: string;
+    condition?: WorkflowCondition;
   }): Promise<WorkflowData>;
   abstract addAction(
     workflowId: string,
