@@ -13,6 +13,26 @@ import { MerchantEntity, Role } from '../../domain/models/merchant.entity';
 export class OrderRepositoryImpl implements IOrderRepository {
   constructor(private prisma: PrismaService) {}
 
+  private toOrderEntity(prismaOrder: {
+    id: string;
+    merchantId: string;
+    customerEmail: string;
+    status: string;
+    createdAt: Date;
+    items: Array<{ productId: string; quantity: number; price: number }>;
+  }): OrderEntity {
+    return OrderEntity.create(
+      prismaOrder.id,
+      prismaOrder.merchantId,
+      prismaOrder.customerEmail,
+      prismaOrder.items.map(
+        (i) => new OrderItem(i.productId, i.quantity, i.price),
+      ),
+      (prismaOrder.status as OrderStatus) || OrderStatus.PENDING,
+      prismaOrder.createdAt,
+    );
+  }
+
   async save(data: OrderEntity): Promise<OrderEntity> {
     const prismaOrder = await this.prisma.order.create({
       data: {
@@ -32,16 +52,30 @@ export class OrderRepositoryImpl implements IOrderRepository {
       include: { items: true },
     });
 
-    return OrderEntity.create(
-      prismaOrder.id,
-      prismaOrder.merchantId,
-      prismaOrder.customerEmail,
-      prismaOrder.items.map(
-        (i) => new OrderItem(i.productId, i.quantity, i.price),
-      ),
-      (prismaOrder.status as OrderStatus) || OrderStatus.PENDING, // Cast pour matcher l'enum
-      prismaOrder.createdAt,
-    );
+    return this.toOrderEntity(prismaOrder);
+  }
+
+  async findById(orderId: string): Promise<OrderEntity | null> {
+    const prismaOrder = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+
+    if (!prismaOrder) {
+      return null;
+    }
+
+    return this.toOrderEntity(prismaOrder);
+  }
+
+  async updateStatus(orderId: string, nextStatus: OrderStatus): Promise<OrderEntity> {
+    const prismaOrder = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { status: nextStatus },
+      include: { items: true },
+    });
+
+    return this.toOrderEntity(prismaOrder);
   }
 
   async findMerchantEmail(merchantId: string): Promise<MerchantEntity | null> {

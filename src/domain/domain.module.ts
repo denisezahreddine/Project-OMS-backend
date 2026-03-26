@@ -9,12 +9,14 @@ import { FindWorkflowExecutionsUseCase } from './usecases/find-workflow-executio
 import { ListMerchantWorkflowsUseCase } from './usecases/list-merchant-workflows.usecase';
 import {WorkflowEngineUsecase} from "./usecases/workflow-engine.usecase";
 import { ToggleWorkflowUseCase } from './usecases/toggle-workflow.usecase';
+import { ChangeOrderStatusUseCase } from './usecases/change-order-status.usecase';
 @Module({
   imports: [InfrastructureModule],
   providers: [
     RegisterUseCase,
     LoginUseCase,
     CreateOrderUseCase,
+    ChangeOrderStatusUseCase,
     WorkflowEngineUsecase,
     CreateWorkflowUseCase,
     AddActionToWorkflowUseCase,
@@ -26,6 +28,7 @@ import { ToggleWorkflowUseCase } from './usecases/toggle-workflow.usecase';
     RegisterUseCase,
     LoginUseCase,
     CreateOrderUseCase,
+    ChangeOrderStatusUseCase,
     CreateWorkflowUseCase,
     WorkflowEngineUsecase,
     AddActionToWorkflowUseCase,

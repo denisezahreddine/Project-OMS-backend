@@ -7,9 +7,11 @@ import {
   ValidateNested,
   IsNumber,
   Min,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {ApiProperty} from "@nestjs/swagger";
+import { OrderStatus } from '../../domain/models/order.entity';
 
 class OrderItemDto {
   @ApiProperty()
@@ -43,4 +45,10 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
   items: OrderItemDto[];
+}
+
+export class ChangeOrderStatusDto {
+  @ApiProperty({ enum: OrderStatus, enumName: 'OrderStatus' })
+  @IsEnum(OrderStatus)
+  status: OrderStatus;
 }
