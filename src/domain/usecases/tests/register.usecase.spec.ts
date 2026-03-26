@@ -1,8 +1,8 @@
-import { RegisterUseCase } from './register.usecase';
-import { MerchantPort } from '../ports/merchant.port';
-import { MerchantEntity, Role } from '../models/merchant.entity';
+import { RegisterUseCase } from '../register.usecase';
+import { MerchantPort } from '../../ports/merchant.port';
+import { MerchantEntity, Role } from '../../models/merchant.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CustomErrorException } from '../exceptions/custom.error.exceptions';
+import { CustomErrorException } from '../../exceptions/custom.error.exceptions';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
